@@ -6,7 +6,7 @@ const port = 3000;
 
 app.get("/", async (req, res) => {
     const newUrl = req.query.url;
-    const data = await Scraper.addLinks(newUrl);
+    const data = await Scraper.scrapeSites(newUrl);
     console.log(`Sent ${Object.keys(data).length} links to client.`);
     res.send(data);
 });
