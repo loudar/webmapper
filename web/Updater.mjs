@@ -101,5 +101,14 @@ export class Updater {
         };
 
         const network = new Network(graph, data, options);
+
+        network.on("click", (params) => {
+            if (params.nodes.length === 0) {
+                return;
+            }
+            const nodeId = params.nodes[0];
+            const url = nodes.get(nodeId).label;
+            window.open(url, "_blank");
+        });
     }
 }
