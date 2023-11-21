@@ -18,6 +18,10 @@ app.get("/addSite", async (req, res) => {
 app.get("/getLinks", async (req, res) => {
     console.log("Sending links to client...");
     const file = "links.json";
+    if (!fs.existsSync(file)) {
+        res.send({});
+        return;
+    }
     const fileContent = fs.readFileSync(file);
     const data = JSON.parse(fileContent.toString());
     console.log(`Sent ${Object.keys(data).length} links to client.`);
