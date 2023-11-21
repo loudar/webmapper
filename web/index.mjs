@@ -1,15 +1,34 @@
 import {Api} from "./Api.mjs";
-import {DataSet, Network} from "vis-network";
+import {DataSet} from "vis-data";
+import {Network} from "vis-network";
 
 const links = await Api.getLinks();
 const graph = document.getElementById('graph');
 
 const nodesArray = [];
 const edgesArray = [];
+
+let idCounter = 1;
+let urlToIdMap = {};
+
+for (const [url] of Object.entries(links)) {
+    nodesArray.push({id: idCounter, label: url});
+    urlToIdMap[url] = idCounter++;
+    for (const link of links[url]) {
+        if (!urlToIdMap[link]) {
+            urlToIdMap[link] = idCounter++;
+        }
+    }
+}
+
 for (const [url, linkList] of Object.entries(links)) {
-    nodesArray.push({id: url, label: url});
+    let fromId = urlToIdMap[url];
     for (const link of linkList) {
-        edgesArray.push({from: url, to: link});
+        let toId = urlToIdMap[link];
+        if (!nodesArray.find(node => node.id === toId)) {
+            nodesArray.push({id: toId, label: link});
+        }
+        edgesArray.push({from: fromId, to: toId});
     }
 }
 
