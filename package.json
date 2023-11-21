@@ -5,8 +5,7 @@
   "main": "main.mjs",
   "type": "module",
   "scripts": {
-    "run": "node --experimental-modules main.mjs",
-    "server": "node --experimental-modules server.mjs"
+    "server": "node --experimental-modules server.mjs --max-old-space-size=4096"
   },
   "author": "",
   "license": "ISC",
