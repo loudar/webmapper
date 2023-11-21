@@ -14,8 +14,7 @@ let urlFrequencyMap = {};
 
 const linkKeys = Object.entries(links);
 for (const [url] of linkKeys) {
-    let urlFrequency = linkKeys.filter(([_, linkList]) => linkList.includes(url)).length;
-    urlFrequencyMap[url] = urlFrequency;
+    urlFrequencyMap[url] = links[url] ? links[url].length : 0;
     urlToIdMap[url] = idCounter++;
     for (const link of links[url]) {
         if (!urlToIdMap[link]) {
@@ -24,17 +23,29 @@ for (const [url] of linkKeys) {
     }
 }
 
-let minSize = 10; // Minimum node size
-let maxSize = 100; // Maximum node size
 let maxFrequency = Math.max(...Object.values(urlFrequencyMap));
 
+function colorFromFrequency(frequency) {
+    const hue = Math.floor(120 * frequency / maxFrequency);
+    return `hsl(${hue}, 100%, 50%)`;
+}
+
 for (const [url, id] of Object.entries(urlToIdMap)) {
-    let size = minSize + ((urlFrequencyMap[url] / maxFrequency) * (maxSize - minSize));
+    let size = links[url] ? links[url].length : 0;
+    const relativeSize = size / maxFrequency;
     const linkHasLinks = links[url] && links[url].length > 0;
+
     if (!linkHasLinks) {
         continue;
     }
-    nodesArray.push({id, label: url, value: size});
+
+    nodesArray.push({
+        id,
+        label: url,
+        shape: "dot",
+        size: 10 + (relativeSize * 50),
+        color: colorFromFrequency(size),
+    });
 }
 
 for (const [url, linkList] of linkKeys) {
@@ -81,6 +92,9 @@ const options = {
                 max: 30
             }
         }
+    },
+    interaction: {
+        hover: true
     }
 };
 
