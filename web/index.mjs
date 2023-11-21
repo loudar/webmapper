@@ -2,7 +2,7 @@ import {Updater} from "./Updater.mjs";
 
 await Updater.update();
 
-const intervalSeconds = 60 * 10;
+const intervalSeconds = 60 * 30;
 let locked = false;
 setInterval(async () => {
     if (locked) {

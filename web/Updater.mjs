@@ -41,13 +41,16 @@ export class Updater {
                 continue;
             }
 
-            nodesArray.push({
+            const node = {
                 id,
-                label: url,
                 shape: "dot",
                 size: 10 + (relativeSize * 50),
                 color: colorFromFrequency(size),
-            });
+            };
+            if (relativeSize > 0.2) {
+                node.label = url;
+            }
+            nodesArray.push(node);
         }
 
         for (const [url, linkList] of linkKeys) {
