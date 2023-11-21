@@ -93,7 +93,8 @@ export class Updater {
                         min: 8,
                         max: 30
                     }
-                }
+                },
+                font: { size: 14, color: "#fff" }
             },
             interaction: {
                 hover: true
