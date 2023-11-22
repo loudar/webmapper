@@ -12,11 +12,12 @@ app.use(cors({ origin: 'http://localhost:3334' }));
 
 const db = new DB("data.targoninc.com");
 await db.connect();
+const scraper = new Scraper();
 
 app.get("/addSite", async (req, res) => {
     const newUrl = req.query.url;
     console.log(`Adding links for page ${newUrl} to client...`);
-    await Scraper.scrapeSites(db, newUrl);
+    await Scraper.scrapeSites(db, scraper, newUrl);
     console.log(`Done adding links for page ${newUrl}.`);
     res.send({});
 });

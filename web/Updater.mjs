@@ -12,6 +12,7 @@ export class Updater {
             return `hsl(${hue}, 100%, 50%)`;
         } else {
             const saturation = Math.floor(100 * intensity);
+            console.log(intensity);
             return `hsla(${hue}, ${saturation}%, 50%, ${intensity})`;
         }
     }
@@ -27,7 +28,7 @@ export class Updater {
         let urlToIdMap = {};
         let urlOutCountMap = {};
         let urlInCountMap = {};
-        const colorMap = {};
+        let colorMap = {};
 
         const linkKeys = Object.entries(links);
         for (const [url] of linkKeys) {
@@ -127,10 +128,14 @@ export class Updater {
         });
     }
 
-    static colorFromMap(colorMap, url, intensity = null) {
+    static colorFromMap(colorMap, url, intensity) {
         const hostname = Scraper.getHost(url);
         if (!colorMap[hostname]) {
             colorMap[hostname] = Updater.colorFromFrequency(Math.random(), intensity);
+        } else if (intensity) {
+            const currentColor = colorMap[hostname];
+            const currentHue = parseInt(currentColor.substring(4, currentColor.indexOf(",")));
+            colorMap[hostname] = `hsla(${currentHue}, 100%, 50%, ${intensity})`;
         }
         return colorMap[hostname];
     }

@@ -1,5 +1,4 @@
 import {DB} from "../lib/DB.mjs";
-import fs from "fs";
 
 const db = new DB("data.targoninc.com");
 await db.connect();
