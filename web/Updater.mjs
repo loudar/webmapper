@@ -55,6 +55,7 @@ export class Updater {
             nodesArray.push(node);
         }
 
+        const edgeColor = "rgba(200,200,200,0.5)";
         for (const [url, linkList] of linkKeys) {
             let fromId = urlToIdMap[url];
             for (const link of linkList) {
@@ -64,7 +65,11 @@ export class Updater {
                 if (!linkHasLinks || relativeSize < 0.001) {
                     continue;
                 }
-                edgesArray.push({from: fromId, to: urlToIdMap[link]});
+                edgesArray.push({
+                    from: fromId,
+                    to: urlToIdMap[link],
+                    color: edgeColor
+                });
             }
         }
 
