@@ -65,7 +65,7 @@ export class Updater {
                 size: minNodeSize + (relativeOutCount * 50),
                 color: Updater.colorFromMap(colorMap, url),
                 url: url,
-                label: url,
+                label: url.substr(0, 37) + (url.length > 37 ? "..." : ""),
                 font: {
                     size: 4 + (relativeOutCount * 26)
                 },
