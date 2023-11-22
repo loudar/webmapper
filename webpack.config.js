@@ -1,6 +1,8 @@
 import path from "path";
 import {spawn} from "child_process";
+import dotenv from "dotenv";
 
+dotenv.config();
 const dirname = path.resolve();
 
 export default {
@@ -30,7 +32,10 @@ export default {
     },
 };
 
-const child = spawn('node ./server.mjs', [], {shell: true});
+const child = spawn('node ./server.mjs', [
+    `MYSQL_USER=${process.env.MYSQL_USER}`,
+    `MYSQL_PASSWORD=${process.env.MYSQL_PASSWORD}`,
+], {shell: true});
 child.stdout.on('data', function (data) {
     process.stdout.write(data);
 });

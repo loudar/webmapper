@@ -1,6 +1,7 @@
 import {Api} from "./Api.mjs";
 import {DataSet} from "vis-data";
 import {Network} from "vis-network";
+import {VisNetworkOptions} from "./VisNetworkOptions.mjs";
 
 export class Updater {
     static async update() {
@@ -37,7 +38,7 @@ export class Updater {
             const relativeSize = size / maxFrequency;
             const linkHasLinks = links[url] && links[url].length > 0;
 
-            if (!linkHasLinks) {
+            if (!linkHasLinks || relativeSize < 0.001) {
                 continue;
             }
 
@@ -46,8 +47,9 @@ export class Updater {
                 shape: "dot",
                 size: 10 + (relativeSize * 50),
                 color: colorFromFrequency(size),
+                url: url
             };
-            if (relativeSize > 0.2) {
+            if (relativeSize > 0.01) {
                 node.label = url;
             }
             nodesArray.push(node);
@@ -57,7 +59,9 @@ export class Updater {
             let fromId = urlToIdMap[url];
             for (const link of linkList) {
                 const linkHasLinks = links[link] && links[link].length > 0;
-                if (!linkHasLinks) {
+                let size = links[url] ? links[url].length : 0;
+                const relativeSize = size / maxFrequency;
+                if (!linkHasLinks || relativeSize < 0.001) {
                     continue;
                 }
                 edgesArray.push({from: fromId, to: urlToIdMap[link]});
@@ -72,46 +76,14 @@ export class Updater {
             edges: edges
         };
 
-        const options = {
-            physics: {
-                stabilization: false,
-                barnesHut: {
-                    gravitationalConstant: -20000,
-                    springConstant: 0.01,
-                    springLength: 200
-                }
-            },
-            layout: {
-                improvedLayout: false,
-            },
-            edges: {
-                arrows: {
-                    to: {enabled: true, scaleFactor: 1, type: 'arrow'}
-                }
-            },
-            nodes: {
-                scaling: {
-                    label: {
-                        enabled: false,
-                        min: 8,
-                        max: 30
-                    }
-                },
-                font: { size: 14, color: "#fff" }
-            },
-            interaction: {
-                hover: true
-            }
-        };
-
-        const network = new Network(graph, data, options);
+        const network = new Network(graph, data, new VisNetworkOptions());
 
         network.on("click", (params) => {
             if (params.nodes.length === 0) {
                 return;
             }
             const nodeId = params.nodes[0];
-            const url = nodes.get(nodeId).label;
+            const url = nodes.get(nodeId).url;
             window.open(url, "_blank");
         });
     }

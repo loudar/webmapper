@@ -1,31 +1,28 @@
 import {Scraper} from "./lib/Scraper.mjs";
 import express from "express";
-import fs from "fs";
 import cors from "cors";
+import {DB} from "./lib/DB.mjs";
 
 const app = express();
 const port = 3000;
 
 app.use(cors({ origin: 'http://localhost:3334' }));
 
+const db = new DB("data.targoninc.com");
+await db.connect();
+
 app.get("/addSite", async (req, res) => {
     const newUrl = req.query.url;
     console.log(`Adding links for page ${newUrl} to client...`);
-    const data = await Scraper.scrapeSites(newUrl);
-    console.log(`Sent ${Object.keys(data).length} links to client.`);
-    res.send(data);
+    await Scraper.scrapeSites(db, newUrl);
+    console.log(`Done adding links for page ${newUrl}.`);
+    res.send({});
 });
 app.get("/getLinks", async (req, res) => {
-    console.log("Sending links to client...");
-    const file = "links.json";
-    if (!fs.existsSync(file)) {
-        res.send({});
-        return;
-    }
-    const fileContent = fs.readFileSync(file);
-    const data = JSON.parse(fileContent.toString());
-    console.log(`Sent ${Object.keys(data).length} links to client.`);
-    res.send(data);
+    console.log("Client requested links...");
+    const links = await db.getLinks(true);
+    console.log(`Sent ${Object.keys(links).length} links to client.`);
+    res.send(links);
 });
 
 app.listen(port, '0.0.0.0', () => {

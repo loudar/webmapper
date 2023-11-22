@@ -2,3 +2,4 @@
 links.json
 *.idea
 /dist/*
+*.env
