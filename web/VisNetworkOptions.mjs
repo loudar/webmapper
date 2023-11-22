@@ -1,29 +1,33 @@
 export class VisNetworkOptions {
     physics = {
-        stabilization: false,
-        barnesHut: {
-            gravitationalConstant: -20000,
-            springConstant: 0.1,
-            springLength: 100
-        }
+        stabilization: true,
+        forceAtlas2Based: {
+            theta: 0.75,
+            gravitationalConstant: -20,
+            centralGravity: 0.005,
+            springConstant: 0.08,
+            springLength: 300,
+            damping: 0.8,
+            avoidOverlap: 0.9
+        },
+        maxVelocity: 50,
+        minVelocity: 0.1,
+        solver: 'forceAtlas2Based',
     }
     layout = {
-        improvedLayout: false,
+        improvedLayout: true,
     }
     edges = {
-        arrows: {
-            to: {enabled: true, scaleFactor: 1, type: 'arrow'}
-        }
+        smooth: false,
+        font: {
+            size: 10,
+            color: "#fff"
+        },
     }
     nodes = {
-        scaling: {
-            label: {
-                enabled: false,
-                min: 8,
-                max: 30
-            }
-        },
-        font: {size: 14, color: "#fff"}
+        font: {
+            color: "#fff"
+        }
     }
     interaction = {
         hover: true

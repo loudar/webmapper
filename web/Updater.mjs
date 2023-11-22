@@ -28,30 +28,35 @@ export class Updater {
 
         let maxFrequency = Math.max(...Object.values(urlFrequencyMap));
 
-        function colorFromFrequency(frequency) {
+        function colorFromFrequency(frequency, transparency = null) {
             const hue = Math.floor(120 * frequency / maxFrequency);
-            return `hsl(${hue}, 100%, 50%)`;
+            if (!transparency) {
+                return `hsl(${hue}, 100%, 50%)`;
+            } else {
+                return `hsla(${hue}, 100%, 50%, ${transparency})`;
+            }
         }
 
+        const showPercentage = 97;
         for (const [url, id] of Object.entries(urlToIdMap)) {
             let size = links[url] ? links[url].length : 0;
             const relativeSize = size / maxFrequency;
             const linkHasLinks = links[url] && links[url].length > 0;
-
-            if (!linkHasLinks || relativeSize < 0.001) {
+            if (!linkHasLinks || relativeSize < (100 - showPercentage) / 100) {
                 continue;
             }
 
             const node = {
                 id,
                 shape: "dot",
-                size: 10 + (relativeSize * 50),
+                size: 5 + ((relativeSize ** 2) * 50),
                 color: colorFromFrequency(size),
-                url: url
+                url: url,
+                label: url,
+                font: {
+                    size: 4 + (relativeSize * 26)
+                }
             };
-            if (relativeSize > 0.01) {
-                node.label = url;
-            }
             nodesArray.push(node);
         }
 
@@ -62,13 +67,15 @@ export class Updater {
                 const linkHasLinks = links[link] && links[link].length > 0;
                 let size = links[url] ? links[url].length : 0;
                 const relativeSize = size / maxFrequency;
-                if (!linkHasLinks || relativeSize < 0.001) {
+                if (!linkHasLinks || relativeSize < (100 - showPercentage) / 100) {
                     continue;
                 }
                 edgesArray.push({
                     from: fromId,
                     to: urlToIdMap[link],
-                    color: edgeColor
+                    color: colorFromFrequency(size, 0.5),
+                    width: 1 + (relativeSize * 5),
+                    title: `${url} -> ${link}`
                 });
             }
         }
