@@ -4,6 +4,16 @@ import {Network} from "vis-network";
 import {VisNetworkOptions} from "./VisNetworkOptions.mjs";
 
 export class Updater {
+    static colorFromFrequency(ratio, intensity = null) {
+        const hue = Math.floor(180 * (1 - ratio));
+        if (!intensity) {
+            return `hsl(${hue}, 100%, 50%)`;
+        } else {
+            const saturation = Math.floor(100 * intensity);
+            return `hsla(${hue}, ${saturation}%, 50%, ${intensity})`;
+        }
+    }
+
     static async update() {
         const links = await Api.getLinks();
         const graph = document.getElementById('graph');
@@ -13,70 +23,68 @@ export class Updater {
 
         let idCounter = 1;
         let urlToIdMap = {};
-        let urlFrequencyMap = {};
+        let urlOutCountMap = {};
+        let urlInCountMap = {};
 
         const linkKeys = Object.entries(links);
         for (const [url] of linkKeys) {
-            urlFrequencyMap[url] = links[url] ? links[url].length : 0;
+            urlOutCountMap[url] = links[url] ? links[url].length : 0;
             urlToIdMap[url] = idCounter++;
             for (const link of links[url]) {
                 if (!urlToIdMap[link]) {
                     urlToIdMap[link] = idCounter++;
                 }
+                if (!urlInCountMap[link]) {
+                    urlInCountMap[link] = 1;
+                } else {
+                    urlInCountMap[link]++;
+                }
             }
         }
 
-        let maxFrequency = Math.max(...Object.values(urlFrequencyMap));
+        const maxInCount = Math.max(...Object.values(urlInCountMap));
+        const maxOutCount = Math.max(...Object.values(urlOutCountMap));
 
-        function colorFromFrequency(frequency, transparency = null) {
-            const hue = Math.floor(120 * frequency / maxFrequency);
-            if (!transparency) {
-                return `hsl(${hue}, 100%, 50%)`;
-            } else {
-                return `hsla(${hue}, 100%, 50%, ${transparency})`;
-            }
-        }
-
-        const showPercentage = 97;
+        const countTreshhold = 10;
+        const minNodeSize = 2;
         for (const [url, id] of Object.entries(urlToIdMap)) {
-            let size = links[url] ? links[url].length : 0;
-            const relativeSize = size / maxFrequency;
-            const linkHasLinks = links[url] && links[url].length > 0;
-            if (!linkHasLinks || relativeSize < (100 - showPercentage) / 100) {
+            const inCount = urlInCountMap[url] ?? 0;
+            const outCount = urlOutCountMap[url] ?? 0;
+            const relativeInCount = inCount / maxInCount;
+            const relativeOutCount = outCount / maxOutCount;
+            if (outCount < countTreshhold) {
                 continue;
             }
 
             const node = {
                 id,
                 shape: "dot",
-                size: 5 + ((relativeSize ** 2) * 50),
-                color: colorFromFrequency(size),
+                size: minNodeSize + ((relativeOutCount ** 2) * 50),
+                color: Updater.colorFromFrequency(outCount / maxOutCount, relativeOutCount),
                 url: url,
                 label: url,
                 font: {
-                    size: 4 + (relativeSize * 26)
+                    size: 4 + (relativeOutCount * 26)
                 }
             };
-            nodesArray.push(node);
+            if (!nodesArray.find(node => node.id === id)) {
+                nodesArray.push(node);
+            }
         }
 
-        const edgeColor = "rgba(200,200,200,0.5)";
-        for (const [url, linkList] of linkKeys) {
-            let fromId = urlToIdMap[url];
-            for (const link of linkList) {
-                const linkHasLinks = links[link] && links[link].length > 0;
-                let size = links[url] ? links[url].length : 0;
-                const relativeSize = size / maxFrequency;
-                if (!linkHasLinks || relativeSize < (100 - showPercentage) / 100) {
-                    continue;
-                }
-                edgesArray.push({
-                    from: fromId,
-                    to: urlToIdMap[link],
-                    color: colorFromFrequency(size, 0.5),
-                    width: 1 + (relativeSize * 5),
-                    title: `${url} -> ${link}`
-                });
+        for (const node of nodesArray) {
+            const id = node.id;
+            for (const link of links[node.url]) {
+                const targetId = urlToIdMap[link];
+                const outCount = urlOutCountMap[node.url];
+                const edge = {
+                    from: id,
+                    to: targetId,
+                    color: Updater.colorFromFrequency(outCount / maxOutCount, 0.3),
+                    width: 1,
+                    title: `${node.url} -> ${link}`
+                };
+                edgesArray.push(edge);
             }
         }
 
