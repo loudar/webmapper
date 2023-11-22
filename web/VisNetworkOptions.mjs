@@ -6,9 +6,9 @@ export class VisNetworkOptions {
             gravitationalConstant: -20,
             centralGravity: 0.005,
             springConstant: 0.08,
-            springLength: 300,
+            springLength: 500,
             damping: 0.8,
-            avoidOverlap: 0.9
+            avoidOverlap: 0.99
         },
         maxVelocity: 50,
         minVelocity: 0.1,

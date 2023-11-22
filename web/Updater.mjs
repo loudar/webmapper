@@ -45,8 +45,8 @@ export class Updater {
         const maxInCount = Math.max(...Object.values(urlInCountMap));
         const maxOutCount = Math.max(...Object.values(urlOutCountMap));
 
-        const countTreshhold = 10;
-        const minNodeSize = 2;
+        const countTreshhold = 6;
+        const minNodeSize = 3;
         for (const [url, id] of Object.entries(urlToIdMap)) {
             const inCount = urlInCountMap[url] ?? 0;
             const outCount = urlOutCountMap[url] ?? 0;
@@ -59,8 +59,8 @@ export class Updater {
             const node = {
                 id,
                 shape: "dot",
-                size: minNodeSize + ((relativeOutCount ** 2) * 50),
-                color: Updater.colorFromFrequency(outCount / maxOutCount, relativeOutCount),
+                size: minNodeSize + (relativeOutCount * 50),
+                color: Updater.colorFromFrequency(outCount / maxOutCount),
                 url: url,
                 label: url,
                 font: {
