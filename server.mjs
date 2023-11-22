@@ -2,7 +2,9 @@ import {Scraper} from "./lib/Scraper.mjs";
 import express from "express";
 import cors from "cors";
 import {DB} from "./lib/DB.mjs";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
 const port = 3000;
 
