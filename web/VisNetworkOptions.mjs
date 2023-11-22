@@ -1,12 +1,18 @@
 export class VisNetworkOptions {
     physics = {
-        stabilization: true,
+        stabilization: {
+            enabled: true,
+            iterations: 1000,
+            updateInterval: 100,
+            onlyDynamicEdges: false,
+            fit: true
+        },
         forceAtlas2Based: {
             theta: 0.75,
             gravitationalConstant: -20,
             centralGravity: 0.005,
-            springConstant: 0.08,
-            springLength: 500,
+            springConstant: 0.1,
+            springLength: 100,
             damping: 0.8,
             avoidOverlap: 0.99
         },
@@ -31,5 +37,10 @@ export class VisNetworkOptions {
     }
     interaction = {
         hover: true
+    }
+    configure = {
+        enabled: false,
+        filter: "nodes,edges",
+        showButton: true,
     }
 }

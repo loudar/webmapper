@@ -2,6 +2,8 @@ import {Api} from "./Api.mjs";
 import {DataSet} from "vis-data";
 import {Network} from "vis-network";
 import {VisNetworkOptions} from "./VisNetworkOptions.mjs";
+import {Scraper} from "../lib/Scraper.mjs";
+import {Clusterer} from "./Clusterer.mjs";
 
 export class Updater {
     static colorFromFrequency(ratio, intensity = null) {
@@ -65,6 +67,9 @@ export class Updater {
                 label: url,
                 font: {
                     size: 4 + (relativeOutCount * 26)
+                },
+                options: {
+                    clusterId: Scraper.getHost(url)
                 }
             };
             if (!nodesArray.find(node => node.id === id)) {
@@ -80,9 +85,14 @@ export class Updater {
                 const edge = {
                     from: id,
                     to: targetId,
-                    color: Updater.colorFromFrequency(outCount / maxOutCount, 0.3),
                     width: 1,
-                    title: `${node.url} -> ${link}`
+                    title: `${node.url} -> ${link}`,
+                    color: {
+                        color: Updater.colorFromFrequency(outCount / 180, 0.3),
+                        hover: "#fff",
+                        highlight: "#fff",
+                        inherit: false
+                    }
                 };
                 edgesArray.push(edge);
             }
@@ -96,9 +106,16 @@ export class Updater {
             edges: edges
         };
 
-        const network = new Network(graph, data, new VisNetworkOptions());
+        let network = new Network(graph, data, new VisNetworkOptions());
+        network.on("stabilizationIterationsDone", () => {
+            network.setOptions({
+                physics: false
+            });
+            network = Clusterer.clusterById(network, nodes);
+            network.redraw();
+        });
 
-        network.on("click", (params) => {
+        network.on("doubleClick", params => {
             if (params.nodes.length === 0) {
                 return;
             }
