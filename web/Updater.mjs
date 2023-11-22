@@ -54,7 +54,6 @@ export class Updater {
         for (const [url, id] of Object.entries(urlToIdMap)) {
             const inCount = urlInCountMap[url] ?? 0;
             const outCount = urlOutCountMap[url] ?? 0;
-            const relativeInCount = inCount / maxInCount;
             const relativeOutCount = outCount / maxOutCount;
             if (outCount < countTreshhold) {
                 continue;
@@ -66,7 +65,7 @@ export class Updater {
                 size: minNodeSize + (relativeOutCount * 50),
                 color: Updater.colorFromMap(colorMap, url),
                 url: url,
-                label: url.substr(0, 37) + (url.length > 37 ? "..." : ""),
+                label: url.substring(0, 37) + (url.length > 37 ? "..." : ""),
                 font: {
                     size: 4 + (relativeOutCount * 26)
                 },
