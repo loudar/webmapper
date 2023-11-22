@@ -86,11 +86,12 @@ export class Updater {
                     from: id,
                     to: targetId,
                     width: 1,
+                    hoverWidth: 1,
                     title: `${node.url} -> ${link}`,
                     color: {
                         color: Updater.colorFromFrequency(outCount / 180, 0.3),
-                        hover: "#fff",
-                        highlight: "#fff",
+                        hover: "#ff0077",
+                        highlight: "#ff0077",
                         inherit: false
                     }
                 };
