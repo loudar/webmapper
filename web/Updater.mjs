@@ -7,7 +7,7 @@ import {Clusterer} from "./Clusterer.mjs";
 
 export class Updater {
     static colorFromFrequency(ratio, intensity = null) {
-        const hue = Math.floor(180 * (1 - ratio));
+        const hue = Math.floor(ratio * 360);
         if (!intensity) {
             return `hsl(${hue}, 100%, 50%)`;
         } else {
@@ -27,6 +27,7 @@ export class Updater {
         let urlToIdMap = {};
         let urlOutCountMap = {};
         let urlInCountMap = {};
+        const colorMap = {};
 
         const linkKeys = Object.entries(links);
         for (const [url] of linkKeys) {
@@ -62,7 +63,7 @@ export class Updater {
                 id,
                 shape: "dot",
                 size: minNodeSize + (relativeOutCount * 50),
-                color: Updater.colorFromFrequency(outCount / maxOutCount),
+                color: Updater.colorFromMap(colorMap, url),
                 url: url,
                 label: url,
                 font: {
@@ -89,7 +90,7 @@ export class Updater {
                     hoverWidth: 1,
                     title: `${node.url} -> ${link}`,
                     color: {
-                        color: Updater.colorFromFrequency(outCount / 180, 0.3),
+                        color: Updater.colorFromMap(colorMap, node.url, 0.3),
                         hover: "#ff0077",
                         highlight: "#ff0077",
                         inherit: false
@@ -124,5 +125,13 @@ export class Updater {
             const url = nodes.get(nodeId).url;
             window.open(url, "_blank");
         });
+    }
+
+    static colorFromMap(colorMap, url, intensity = null) {
+        const hostname = Scraper.getHost(url);
+        if (!colorMap[hostname]) {
+            colorMap[hostname] = Updater.colorFromFrequency(Math.random(), intensity);
+        }
+        return colorMap[hostname];
     }
 }
