@@ -37,3 +37,24 @@ html, body {
     background: #222;
     padding: 5px 10px;
 }
+
+#overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.progress {
+    width: 100%;
+    height: 10px;
+}
+
+.progress-bar {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background-color: #ddd;
+    transition: width 0.5s ease;
+}

@@ -6,6 +6,7 @@ import {Clusterer} from "./Clusterer.mjs";
 import {Util} from "../lib/Util.mjs";
 import {Color} from "./Color.mjs";
 import psl from "psl";
+import {OverlayTemplates} from "./Templates/OverlayTemplates.mjs";
 
 export class Updater {
     static async updateNodes() {
@@ -148,16 +149,19 @@ export class Updater {
 
         const maxIncomingLinkCount = Math.max(...clusters.map(cluster => cluster.targetHosts.map(host => host.incomingLinkCount).reduce((a, b) => a + b, 0)));
         for (const cluster of clusters) {
-            const id = nodesArray.find(node => node.url === cluster.host).id;
+            const id = nodesArray.find(node => node.url === cluster.host)?.id;
             if (!id) {
                 console.error(`Failed to find ID for ${cluster.host}`);
                 continue;
             }
             const outgoingRelative = cluster.outgoingLinkCount / maxOutCount;
             for (let targetHost of cluster.targetHosts) {
-                const targetId = nodesArray.find(node => node.url === targetHost.host).id;
+                const targetId = nodesArray.find(node => node.url === targetHost.host)?.id;
                 if (!targetId) {
-                    console.error(`Failed to find target ID for ${targetHost.host}`);
+                    console.error(`Failed to find target ID for `, { host: targetHost.host });
+                    continue;
+                }
+                if (targetId === id) {
                     continue;
                 }
                 const effectiveStrength = outgoingRelative;
@@ -166,12 +170,13 @@ export class Updater {
                     to: targetId,
                     width: 1 + (effectiveStrength * 3),
                     length: 50 + (effectiveStrength * 300),
-                    title: `${cluster.host} -> ${targetHost.host}`,
+                    title: `${cluster.host} -> ${targetHost.host} (${targetHost.incomingLinkCount})`,
                     color: {
                         color: Color.fromMapHosts(colorMap, cluster.host, 0.15),
                         highlight: "#ff0077",
                         inherit: false
-                    }
+                    },
+                    chosen: false,
                 };
                 edgesArray.push(edge);
             }
@@ -184,6 +189,7 @@ export class Updater {
             edges: edges
         };
 
+        console.log(`Trying to draw ${nodesArray.length} nodes and ${edgesArray.length} edges.`);
         let network = new Network(graph, data, new VisNetworkOptions());
         network.on("stabilizationIterationsDone", () => {
             network.setOptions({
@@ -191,6 +197,26 @@ export class Updater {
             });
             network.redraw();
         });
+        network.on("stabilizationProgress", params => {
+            if (params.iterations % 10 === 0) {
+                Updater.setProgressBar(params.iterations / params.total * 100);
+            }
+        });
+    }
+
+    static setProgressBar(progress) {
+        const overlayContainer = document.getElementById("overlay");
+        const progressBar = document.getElementById("progress-bar");
+        if (!progressBar) {
+            console.log("Creating new progress bar.");
+            const newBar = OverlayTemplates.progressBar(progress);
+            overlayContainer.append(newBar);
+        } else {
+            progressBar.children[0].style.width = `${progress}%`;
+        }
+        if (progress === 100) {
+            document.getElementById("progress-bar").remove();
+        }
     }
 
     static getDomainFromHost(host) {

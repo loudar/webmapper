@@ -2,8 +2,8 @@ export class VisNetworkOptions {
     physics = {
         stabilization: {
             enabled: true,
-            iterations: 1000,
-            updateInterval: 100,
+            iterations: 500,
+            updateInterval: 2,
             onlyDynamicEdges: false,
             fit: true
         },
@@ -15,6 +15,7 @@ export class VisNetworkOptions {
             damping: 0.8,
             avoidOverlap: 0.99
         },
+        timestep: 0.4,
         maxVelocity: 50,
         minVelocity: 0.1,
         solver: 'forceAtlas2Based',
@@ -36,9 +37,9 @@ export class VisNetworkOptions {
     }
     interaction = {
         hover: true,
+        zoomView: true,
         hoverConnectedEdges: false,
         selectConnectedEdges: true,
-        multiSelect: false,
         navigationButtons: true,
     }
     configure = {
