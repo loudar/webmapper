@@ -1,6 +1,6 @@
 import {Updater} from "./Updater.mjs";
 
-await Updater.update();
+await Updater.updateClusters();
 
 const intervalSeconds = 60 * 30;
 let locked = false;
@@ -9,14 +9,14 @@ setInterval(async () => {
         return;
     }
     locked = true;
-    await Updater.update();
+    await Updater.updateClusters();
     locked = false;
 }, intervalSeconds * 1000);
 
 document.addEventListener("keyup", async (event) => {
     if (event.key === "r" && !locked) {
         locked = true;
-        await Updater.update();
+        await Updater.updateClusters();
         locked = false;
     }
 })

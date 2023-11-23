@@ -16,4 +16,12 @@ export class Api {
         }
         return await res.data;
     }
+
+    static async getClusters() {
+        const res = await axios.get("http://localhost:3000/getClusters");
+        if (res.status !== 200 && res.status !== 304) {
+            throw new Error(`Failed to get clusters: ${res.status}`);
+        }
+        return await res.data;
+    }
 }

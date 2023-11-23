@@ -27,6 +27,12 @@ app.get("/getLinks", async (req, res) => {
     console.log(`Sent ${Object.keys(links).length} links to client.`);
     res.send(links);
 });
+app.get("/getClusters", async (req, res) => {
+    console.log("Client requested clusters...");
+    const clusters = await db.getClusters();
+    console.log(`Sent ${clusters.length} clusters to client.`);
+    res.send(clusters);
+});
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Example app listening at http://localhost:${port}`);

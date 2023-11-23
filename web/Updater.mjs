@@ -2,22 +2,12 @@ import {Api} from "./Api.mjs";
 import {DataSet} from "vis-data";
 import {Network} from "vis-network";
 import {VisNetworkOptions} from "./VisNetworkOptions.mjs";
-import {Scraper} from "../lib/Scraper.mjs";
 import {Clusterer} from "./Clusterer.mjs";
+import {Util} from "../lib/Util.mjs";
+import {Color} from "./Color.mjs";
 
 export class Updater {
-    static colorFromFrequency(ratio, intensity = null) {
-        const hue = Math.floor(ratio * 360);
-        if (!intensity) {
-            return `hsl(${hue}, 100%, 50%)`;
-        } else {
-            const saturation = Math.floor(100 * intensity);
-            console.log(intensity);
-            return `hsla(${hue}, ${saturation}%, 50%, ${intensity})`;
-        }
-    }
-
-    static async update() {
+    static async updateNodes() {
         const links = await Api.getLinks();
         const graph = document.getElementById('graph');
 
@@ -63,14 +53,14 @@ export class Updater {
                 id,
                 shape: "dot",
                 size: minNodeSize + (relativeOutCount * 50),
-                color: Updater.colorFromMap(colorMap, url),
+                color: Color.fromMapLink(colorMap, url),
                 url: url,
                 label: url.substring(0, 37) + (url.length > 37 ? "..." : ""),
                 font: {
                     size: 4 + (relativeOutCount * 26)
                 },
                 options: {
-                    clusterId: Scraper.getHost(url)
+                    clusterId: Util.getHost(url)
                 }
             };
             if (!nodesArray.find(node => node.id === id)) {
@@ -90,7 +80,7 @@ export class Updater {
                     hoverWidth: 1,
                     title: `${node.url} -> ${link}`,
                     color: {
-                        color: Updater.colorFromMap(colorMap, node.url, 0.3),
+                        color: Color.fromMapLink(colorMap, node.url, 0.3),
                         hover: "#ff0077",
                         highlight: "#ff0077",
                         inherit: false
@@ -127,15 +117,61 @@ export class Updater {
         });
     }
 
-    static colorFromMap(colorMap, url, intensity) {
-        const hostname = Scraper.getHost(url);
-        if (!colorMap[hostname]) {
-            colorMap[hostname] = Updater.colorFromFrequency(Math.random(), intensity);
-        } else if (intensity) {
-            const currentColor = colorMap[hostname];
-            const currentHue = parseInt(currentColor.substring(4, currentColor.indexOf(",")));
-            colorMap[hostname] = `hsla(${currentHue}, 100%, 50%, ${intensity})`;
+    static async updateClusters() {
+        const clusters = await Api.getClusters();
+        const graph = document.getElementById('graph');
+
+        let colorMap = {};
+        const nodesArray = [];
+        const edgesArray = [];
+        const maxOutCount = Math.max(...clusters.map(cluster => cluster.outgoingLinkCount));
+
+        let id = 0;
+        const minNodeSize = 3;
+        for (const cluster of clusters) {
+            id++;
+            const relativeOutCount = cluster.outgoingLinkCount / maxOutCount;
+            const node = {
+                id,
+                shape: "dot",
+                size: minNodeSize + (relativeOutCount * 50),
+                color: Color.fromMapHosts(colorMap, cluster.host),
+                url: cluster.host,
+                label: cluster.host.substring(0, 37) + (cluster.host.length > 37 ? "..." : ""),
+                font: {
+                    size: 4 + (relativeOutCount * 26)
+                }
+            };
+            nodesArray.push(node);
         }
-        return colorMap[hostname];
+
+        for (const cluster of clusters) {
+            for (let targetHost of cluster.targetHosts) {
+                const targetId = nodesArray.find(node => node.url === targetHost.host).id;
+                const edge = {
+                    from: id,
+                    to: targetId,
+                    width: 1 + (targetHost.incomingLinkCount / cluster.outgoingLinkCount) * 10,
+                    hoverWidth: 1,
+                    title: `${cluster.host} -> ${targetHost.host}`,
+                    color: {
+                        color: Color.fromMapHosts(colorMap, cluster.host, 0.3),
+                        hover: "#ff0077",
+                        highlight: "#ff0077",
+                        inherit: false
+                    }
+                };
+                edgesArray.push(edge);
+            }
+        }
+
+        const nodes = new DataSet(nodesArray);
+        const edges = new DataSet(edgesArray);
+        let data = {
+            nodes: nodes,
+            edges: edges
+        };
+
+        let network = new Network(graph, data, new VisNetworkOptions());
     }
 }

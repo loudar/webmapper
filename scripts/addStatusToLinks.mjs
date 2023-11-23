@@ -1,6 +1,7 @@
 import {DB} from "../lib/DB.mjs";
 import {Scraper} from "../lib/Scraper.mjs";
 import dotenv from "dotenv";
+import {Util} from "../lib/Util.mjs";
 
 dotenv.config();
 const db = new DB("data.targoninc.com");
@@ -13,7 +14,7 @@ const jobs = [];
 
 const scraper = new Scraper();
 async function jobFunction(link, index) {
-    const linkHost = Scraper.getHost(link.link);
+    const linkHost = Util.getHost(link.link);
     const res = await scraper.getPage(linkHost, link.link);
     console.log(`Updating ${link.link} (${index}/${links.length}) with code ${res.status}...`);
     await db.updateLinkStatus(link.link, res.status);
