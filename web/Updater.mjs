@@ -166,7 +166,6 @@ export class Updater {
                     title: `${cluster.host} -> ${targetHost.host}`,
                     color: {
                         color: Color.fromMapHosts(colorMap, cluster.host, 0.3),
-                        hover: "#ff0077",
                         highlight: "#ff0077",
                         inherit: false
                     }

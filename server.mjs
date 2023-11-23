@@ -29,7 +29,7 @@ app.get("/getLinks", async (req, res) => {
 });
 app.get("/getClusters", async (req, res) => {
     console.log("Client requested clusters...");
-    const clusters = await db.getClusters();
+    const clusters = await db.getClustersWithoutSubdomains();
     console.log(`Sent ${clusters.length} clusters to client.`);
     res.send(clusters);
 });
