@@ -147,8 +147,17 @@ export class Updater {
 
         const maxIncomingLinkCount = Math.max(...clusters.map(cluster => cluster.targetHosts.map(host => host.incomingLinkCount).reduce((a, b) => a + b, 0)));
         for (const cluster of clusters) {
+            const id = nodesArray.find(node => node.url === cluster.host).id;
+            if (!id) {
+                console.error(`Failed to find ID for ${cluster.host}`);
+                continue;
+            }
             for (let targetHost of cluster.targetHosts) {
                 const targetId = nodesArray.find(node => node.url === targetHost.host).id;
+                if (!targetId) {
+                    console.error(`Failed to find target ID for ${targetHost.host}`);
+                    continue;
+                }
                 const edge = {
                     from: id,
                     to: targetId,
