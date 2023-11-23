@@ -84,7 +84,7 @@ export class Updater {
                         color: Color.fromMapLink(colorMap, node.url, 0.3),
                         hover: "#ff0077",
                         highlight: "#ff0077",
-                        inherit: false
+                        inherit: "from"
                     }
                 };
                 edgesArray.push(edge);

@@ -37,6 +37,9 @@ export class VisNetworkOptions {
     interaction = {
         hover: true,
         hoverConnectedEdges: false,
+        selectConnectedEdges: true,
+        multiSelect: false,
+        navigationButtons: true,
     }
     configure = {
         enabled: false,
