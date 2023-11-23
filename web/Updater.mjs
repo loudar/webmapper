@@ -145,13 +145,14 @@ export class Updater {
             nodesArray.push(node);
         }
 
+        const maxIncomingLinkCount = Math.max(...clusters.map(cluster => cluster.targetHosts.map(host => host.incomingLinkCount).reduce((a, b) => a + b, 0)));
         for (const cluster of clusters) {
             for (let targetHost of cluster.targetHosts) {
                 const targetId = nodesArray.find(node => node.url === targetHost.host).id;
                 const edge = {
                     from: id,
                     to: targetId,
-                    width: 1 + (targetHost.incomingLinkCount / cluster.outgoingLinkCount) * 10,
+                    width: 1 + (targetHost.incomingLinkCount / maxIncomingLinkCount) * 5,
                     hoverWidth: 1,
                     title: `${cluster.host} -> ${targetHost.host}`,
                     color: {
@@ -173,5 +174,11 @@ export class Updater {
         };
 
         let network = new Network(graph, data, new VisNetworkOptions());
+        network.on("stabilizationIterationsDone", () => {
+            network.setOptions({
+                physics: false
+            });
+            network.redraw();
+        });
     }
 }
