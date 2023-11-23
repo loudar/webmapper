@@ -5,6 +5,7 @@ import {VisNetworkOptions} from "./VisNetworkOptions.mjs";
 import {Clusterer} from "./Clusterer.mjs";
 import {Util} from "../lib/Util.mjs";
 import {Color} from "./Color.mjs";
+import psl from "psl";
 
 export class Updater {
     static async updateNodes() {
@@ -152,20 +153,22 @@ export class Updater {
                 console.error(`Failed to find ID for ${cluster.host}`);
                 continue;
             }
+            const outgoingRelative = cluster.outgoingLinkCount / maxOutCount;
             for (let targetHost of cluster.targetHosts) {
                 const targetId = nodesArray.find(node => node.url === targetHost.host).id;
                 if (!targetId) {
                     console.error(`Failed to find target ID for ${targetHost.host}`);
                     continue;
                 }
+                const effectiveStrength = outgoingRelative;
                 const edge = {
                     from: id,
                     to: targetId,
-                    width: 1 + (targetHost.incomingLinkCount / maxIncomingLinkCount) * 5,
-                    hoverWidth: 1,
+                    width: 1 + (effectiveStrength * 3),
+                    length: 50 + (effectiveStrength * 300),
                     title: `${cluster.host} -> ${targetHost.host}`,
                     color: {
-                        color: Color.fromMapHosts(colorMap, cluster.host, 0.3),
+                        color: Color.fromMapHosts(colorMap, cluster.host, 0.15),
                         highlight: "#ff0077",
                         inherit: false
                     }
@@ -188,5 +191,10 @@ export class Updater {
             });
             network.redraw();
         });
+    }
+
+    static getDomainFromHost(host) {
+        let parsed = psl.parse(host);
+        return parsed.domain;
     }
 }

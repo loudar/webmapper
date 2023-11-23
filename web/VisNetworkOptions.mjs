@@ -11,8 +11,7 @@ export class VisNetworkOptions {
             theta: 0.75,
             gravitationalConstant: -20,
             centralGravity: 0.005,
-            springConstant: 0.1,
-            springLength: 100,
+            springConstant: 0.5,
             damping: 0.8,
             avoidOverlap: 0.99
         },
@@ -21,7 +20,7 @@ export class VisNetworkOptions {
         solver: 'forceAtlas2Based',
     }
     layout = {
-        improvedLayout: true,
+        improvedLayout: false,
     }
     edges = {
         smooth: false,
