@@ -140,6 +140,7 @@ export class Updater {
                 color: Color.fromMapHosts(colorMap, cluster.host),
                 url: cluster.host,
                 label: cluster.host.substring(0, 37) + (cluster.host.length > 37 ? "..." : ""),
+                title: cluster.subdomains.join("\r\n"),
                 font: {
                     size: 4 + (relativeOutCount * 26)
                 }
@@ -196,6 +197,7 @@ export class Updater {
                 physics: false
             });
             network.redraw();
+            console.log("Done.");
         });
         network.on("stabilizationProgress", params => {
             if (params.iterations % 10 === 0) {
@@ -208,7 +210,6 @@ export class Updater {
         const overlayContainer = document.getElementById("overlay");
         const progressBar = document.getElementById("progress-bar");
         if (!progressBar) {
-            console.log("Creating new progress bar.");
             const newBar = OverlayTemplates.progressBar(progress);
             overlayContainer.append(newBar);
         } else {

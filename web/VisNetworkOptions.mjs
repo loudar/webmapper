@@ -15,7 +15,6 @@ export class VisNetworkOptions {
             damping: 0.8,
             avoidOverlap: 0.99
         },
-        timestep: 0.4,
         maxVelocity: 50,
         minVelocity: 0.1,
         solver: 'forceAtlas2Based',
@@ -40,11 +39,5 @@ export class VisNetworkOptions {
         zoomView: true,
         hoverConnectedEdges: false,
         selectConnectedEdges: true,
-        navigationButtons: true,
-    }
-    configure = {
-        enabled: false,
-        filter: "nodes,edges",
-        showButton: true,
     }
 }
