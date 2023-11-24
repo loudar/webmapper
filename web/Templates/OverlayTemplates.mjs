@@ -13,4 +13,13 @@ export class OverlayTemplates {
             )
             .build();
     }
+
+    static hoverTitle(commaSeparatedList) {
+        return FJS.create("div")
+            .classes("hover-title")
+            .children(
+                ...commaSeparatedList.map(item => FJS.create("span").text(item).build())
+            )
+            .build();
+    }
 }
