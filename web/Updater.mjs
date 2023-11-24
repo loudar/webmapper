@@ -43,6 +43,7 @@ export class Updater {
                     if (cluster.host.includes(filterItem)) {
                         node.color = "#f00";
                         node.font.color = "#f00";
+                        found = true;
                     }
                 }
                 if (!found) {
@@ -92,6 +93,7 @@ export class Updater {
                         if (cluster.host.includes(filterItem) || targetHost.host.includes(filterItem)) {
                             edge.color.color = "#f00";
                             edge.color.highlight = "#f00";
+                            found = true;
                         }
                     }
                     if (!found) {
