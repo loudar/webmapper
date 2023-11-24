@@ -17,11 +17,12 @@ const excludeTerms = [
     "skype",
     "linkedin",
     "bing",
-    "twitter"
+    "twitter",
+    "aka.ms"
 ];
 let excludeQuery = excludeTerms.map(() => `link NOT LIKE ?`).join(' AND ');
 let bindVariables = excludeTerms.map(term => `%${term}%`);
-const query = `SELECT * FROM links WHERE content IS NULL AND ${excludeQuery} LIMIT 500`;
+const query = `SELECT * FROM links WHERE status = 200 AND content IS NULL AND ${excludeQuery} LIMIT 500`;
 const links = await db.query(query, bindVariables);
 let done = 0;
 let jobs = [];
