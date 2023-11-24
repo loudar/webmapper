@@ -47,8 +47,8 @@ export class Updater {
                     }
                 }
                 if (!found) {
-                    node.color = "#777";
-                    node.font.color = "#777";
+                    node.color = "#222";
+                    node.font.color = "#bbb";
                 }
             } else {
                 node.label = label;
@@ -97,8 +97,8 @@ export class Updater {
                         }
                     }
                     if (!found) {
-                        edge.color.color = "#777";
-                        edge.color.highlight = "#777";
+                        edge.color.color = "#222";
+                        edge.color.highlight = "#bbb";
                         edge.width = 1;
                     }
                 }
