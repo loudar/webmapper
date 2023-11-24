@@ -5,7 +5,6 @@ import {VisNetworkOptions} from "./VisNetworkOptions.mjs";
 import {Clusterer} from "./Clusterer.mjs";
 import {Util} from "../lib/Util.mjs";
 import {Color} from "./Color.mjs";
-import psl from "psl";
 import {OverlayTemplates} from "./Templates/OverlayTemplates.mjs";
 
 export class Updater {
@@ -218,10 +217,5 @@ export class Updater {
         if (progress === 100) {
             document.getElementById("progress-bar").remove();
         }
-    }
-
-    static getDomainFromHost(host) {
-        let parsed = psl.parse(host);
-        return parsed.domain;
     }
 }
