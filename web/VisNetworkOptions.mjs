@@ -2,7 +2,7 @@ export class VisNetworkOptions {
     physics = {
         stabilization: {
             enabled: true,
-            iterations: 500,
+            iterations: 1000,
             updateInterval: 2,
             onlyDynamicEdges: false,
             fit: true
