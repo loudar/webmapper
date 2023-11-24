@@ -14,11 +14,15 @@ export class OverlayTemplates {
             .build();
     }
 
-    static hoverTitle(commaSeparatedList) {
+    static hoverTitle(commaSeparatedList, host) {
         return FJS.create("div")
             .classes("hover-title")
             .children(
-                ...commaSeparatedList.map(item => FJS.create("span").text(item).build())
+                ...commaSeparatedList.map(item => FJS.create("span").text(item).build()),
+                FJS.create("iframe")
+                    .classes("hover-title-iframe")
+                    .attributes("src", `https://${host}`)
+                    .build()
             )
             .build();
     }

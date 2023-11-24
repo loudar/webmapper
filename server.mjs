@@ -16,9 +16,9 @@ const scraper = new Scraper();
 
 app.get("/addSite", async (req, res) => {
     const newUrl = req.query.url;
-    const ignorePrevious = req.query.new === "true";
+    const onlyNew = req.query.new === "true";
     console.log(`Adding links for page ${newUrl} to client...`);
-    await Scraper.scrapeSites(db, scraper, newUrl, ignorePrevious);
+    await Scraper.scrapeSites(db, scraper, newUrl, onlyNew);
     console.log(`Done adding links for page ${newUrl}.`);
     res.send({});
 });

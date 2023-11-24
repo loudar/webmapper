@@ -139,7 +139,7 @@ export class Updater {
                 color: Color.fromMapHosts(colorMap, cluster.host),
                 url: cluster.host,
                 label: cluster.host.substring(0, 37) + (cluster.host.length > 37 ? "..." : ""),
-                title: OverlayTemplates.hoverTitle(cluster.subdomains),
+                title: OverlayTemplates.hoverTitle(cluster.subdomains, cluster.host),
                 font: {
                     size: 4 + (relativeOutCount * 26)
                 }

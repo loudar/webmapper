@@ -36,6 +36,7 @@ html, body {
     color: white;
     background: #222;
     padding: 5px 10px;
+    transform: translateX(-10px) translateY(10px);
 }
 
 #overlay {
@@ -66,4 +67,9 @@ html, body {
     overflow: auto;
     display: flex;
     flex-direction: column;
+}
+
+.hover-title iframe {
+    height: 600px;
+    width: 1200px;
 }
