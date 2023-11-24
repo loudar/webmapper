@@ -37,7 +37,5 @@ export class VisNetworkOptions {
     interaction = {
         hover: true,
         zoomView: true,
-        hoverConnectedEdges: false,
-        selectConnectedEdges: true,
     }
 }
