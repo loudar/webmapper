@@ -19,7 +19,7 @@ export class Updater {
 
         let id = 0;
         const minNodeSize = 3;
-        const filter = ["arimelody", "mellodoot"];
+        const filter = null;
         const onlyshowFiltered = true;
         for (const cluster of clusters) {
             id++;
