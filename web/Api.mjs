@@ -32,4 +32,12 @@ export class Api {
         }
         return await res.data;
     }
+
+    static async contentStatus() {
+        const res = await axios.get(`http://localhost:3000/contentStatus`);
+        if (res.status !== 200) {
+            throw new Error(`Failed to get content status: ${res.status}`);
+        }
+        return await res.data;
+    }
 }

@@ -1,4 +1,4 @@
-# Use the official Node.js 18 image from the Docker Hub
+# Use the official Node.js 20 image from the Docker Hub
 FROM node:20-slim
 
 # Set the working directory

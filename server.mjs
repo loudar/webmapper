@@ -56,6 +56,13 @@ app.get("/search", async (req, res) => {
     });
 });
 
+app.get("/contentStatus", async (req, res) => {
+    console.log(`Client requested content status...`);
+    const status = await db.getContentStatus();
+    console.log(`Sent content status to client.`);
+    res.send(status);
+});
+
 app.listen(port, '0.0.0.0', () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });

@@ -93,6 +93,10 @@ html, body {
     gap: 5px;
 }
 
+.flex-grow {
+    flex-grow: 1;
+}
+
 .flex-v {
     flex-direction: column;
 }
@@ -109,7 +113,7 @@ input {
     padding: 10px 16px;
     border-radius: var(--border-radius);
     border: 1px solid var(--foreground-dark);
-    background: transparent;
+    background: var(--background-dark);
     color: var(--foreground);
 }
 
@@ -180,4 +184,16 @@ a:hover {
     100% {
         transform: rotate(360deg);
     }
+}
+
+.loading-bar-container {
+    background: var(--background-dark);
+    width: 100%;
+    border-radius: 3px;
+}
+
+.loading-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--accent);
 }
