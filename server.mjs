@@ -8,7 +8,11 @@ dotenv.config();
 const app = express();
 const port = 3000;
 
-app.use(cors({ origin: 'https://smallgoogle.com' }));
+const db_url = process.env.MYSQL_URL.toString();
+console.log(`Connecting to database at url ${db_url}...`);
+const origin = db_url === "data.targoninc.com" ? "http://localhost:3334" : "https://smallgoogle.com";
+console.log(`Using origin ${origin}...`);
+app.use(cors({ origin }));
 
 const db = new DB(process.env.MYSQL_URL);
 await db.connect();

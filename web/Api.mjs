@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const api_url = "https://api.smallgoogle.com";
+const api_url = "http://localhost:3000";
 
 export class Api {
     static async addSite(url) {
