@@ -33,6 +33,11 @@ async function jobFunction(link, index) {
     console.log(`-> ${link.link} (${index}/${links.length})`);
     const linkHost = Util.getHost(link.link);
     const res = await scraper.getPage(linkHost, link.link);
+    if (res.isFileDownload) {
+        console.log(`Skipping ${link.link} because it's a file download.`);
+        done++;
+        return;
+    }
     let content = res.data;
     if (!content) {
         done++;
