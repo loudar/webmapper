@@ -64,5 +64,5 @@ app.get("/contentStatus", async (req, res) => {
 });
 
 app.listen(port, '0.0.0.0', () => {
-    console.log(`Example app listening at https://api.smallgoogle.com`);
+    console.log(`Example app listening at http://localhost:${port}`)
 });
