@@ -141,13 +141,14 @@ a:hover {
     background: var(--background-dark);
 }
 
-.search-results, #search-results {
+.search-results, #search-results, .search-result-link {
     max-width: max-content;
 }
 
 #search-container {
-    max-width: max-content;
+    width: max-content;
     margin: 0 auto;
+    max-width: 1200px;
 }
 
 .search-result-preview-part {
@@ -157,4 +158,9 @@ a:hover {
 .search-result-preview-part.highlight {
     font-weight: 900;
     color: var(--foreground-light);
+}
+
+.search-result-title-part.highlight {
+    font-weight: 900;
+    color: var(--accent);
 }

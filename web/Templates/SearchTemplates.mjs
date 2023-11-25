@@ -62,19 +62,58 @@ export class SearchTemplates {
                 FJS.create("div")
                     .classes("search-result", "flex-v", "padded", "rounded")
                     .children(
-                        FJS.create("span")
-                            .classes("search-result-link")
-                            .text(entry.link)
-                            .build(),
+                        SearchTemplates.title(entry.link.replace(/https?:\/\//, '').replace(/http?:\/\//, ''), query, query),
                         SearchTemplates.preview(entry.preview, query)
                     ).build()
             ).build();
     }
 
-    static preview(text, query) {
-        text = "..." + text + "...";
-        const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        let parts = text.split(new RegExp(`(${escapeRegExp(query)})`, 'gi'));
+    static title(title, query) {
+        let parts;
+        const queryParts = query.split(" ");
+        if (!title) {
+            parts = ["No title available."];
+        } else {
+            const text = title;
+            const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            parts = text.split(new RegExp(`(${escapeRegExp(query)})`, 'gi'));
+            if (parts.length === 1) {
+                const regex = queryParts.join("|");
+                parts = text.split(new RegExp(`(${regex})`, 'gi'));
+                let allContained = true;
+                for (const queryPart of queryParts) {
+                    if (!parts.some(part => part.toLowerCase() === queryPart.toLowerCase())) {
+                        allContained = false;
+                        break;
+                    }
+                }
+                if (!allContained) {
+                    parts = [title];
+                }
+            }
+        }
+        let spanElements = parts.map((part) => {
+            return FJS.create("span")
+                .classes(queryParts.some(qp => qp.toLowerCase() === part.toLowerCase()) ? 'highlight' : '_', 'search-result-title-part')
+                .text(part)
+                .build();
+        });
+
+        return FJS.create("div")
+            .classes("search-result-title", "text-small")
+            .children(...spanElements)
+            .build();
+    }
+
+    static preview(preview, query) {
+        let parts;
+        if (!preview) {
+            parts = ["No content available."];
+        } else {
+            const text = "..." + preview + "...";
+            const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            parts = text.split(new RegExp(`(${escapeRegExp(query)})`, 'gi'));
+        }
         let spanElements = parts.map((part) => {
             return FJS.create("span")
                 .classes(part.toLowerCase() === query.toLowerCase() ? 'highlight' : '_', 'search-result-preview-part')

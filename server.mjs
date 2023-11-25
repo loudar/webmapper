@@ -42,6 +42,11 @@ app.get("/search", async (req, res) => {
     const linkResults = await db.searchLinksExplicit(query);
     const contentResults = await db.searchContentExplicit(query);
     const results = [...linkResults, ...contentResults];
+    if (results.length < 100) {
+        const fuzzyLinkResults = await db.searchLinksFuzzy(query);
+        const fuzzyContentResults = await db.searchContentFuzzy(query);
+        results.push(...fuzzyLinkResults, ...fuzzyContentResults);
+    }
     const endTime = new Date();
     const time = endTime - startTime;
     console.log(`Sent ${results.length} results to client.`);
