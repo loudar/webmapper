@@ -74,10 +74,14 @@ export class SearchTemplates {
                 const regex = queryParts.join("|");
                 parts = text.split(new RegExp(`(${regex})`, 'gi'));
                 let allContained = true;
+                let index = 0;
                 for (const queryPart of queryParts) {
-                    if (!parts.some(part => part.toLowerCase() === queryPart.toLowerCase())) {
+                    const foundIndex = parts.slice(index).findIndex(part => part.toLowerCase() === queryPart.toLowerCase());
+                    if (foundIndex === -1) {
                         allContained = false;
                         break;
+                    } else {
+                        index += foundIndex + 1;
                     }
                 }
                 if (!allContained) {
