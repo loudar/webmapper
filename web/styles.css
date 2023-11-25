@@ -1,3 +1,14 @@
+:root {
+    --border-radius: 4px;
+    --background: #222;
+    --background-light: #333;
+    --background-dark: #000;
+    --foreground: #fff;
+    --foreground-light: #eee;
+    --foreground-dark: #ddd;
+    --accent: #0aa;
+}
+
 #graph {
     width: 100%;
     height: 100%;
@@ -8,6 +19,9 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: sans-serif;
 }
 
 .loading {
@@ -72,4 +86,64 @@ html, body {
 .hover-title iframe {
     height: 600px;
     width: 1200px;
+}
+
+.flex, .flex-v {
+    display: flex;
+    gap: 5px;
+}
+
+.flex-v {
+    flex-direction: column;
+}
+
+.padded {
+    padding: 10px;
+}
+
+.rounded {
+    border-radius: var(--border-radius);
+}
+
+input {
+    padding: 10px 16px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--foreground-dark);
+    background: transparent;
+    color: var(--foreground);
+}
+
+.search-input {
+    font-size: 18px;
+    width: 100%;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.search-result {
+    max-width: max-content;
+}
+
+.text-small {
+    font-size: 14px;
+}
+
+#search-results {
+    background: var(--background-dark);
+}
+
+.search-results, #search-results {
+    max-width: max-content;
+}
+
+#search-container {
+    max-width: max-content;
+    margin: 0 auto;
 }

@@ -35,6 +35,20 @@ app.get("/getClusters", async (req, res) => {
     res.send(clusters);
 });
 
+app.get("/search", async (req, res) => {
+    const query = req.query.query;
+    console.log(`Client searched for "${query}"...`);
+    const startTime = new Date();
+    const results = await db.searchExplicit(query);
+    const endTime = new Date();
+    const time = endTime - startTime;
+    console.log(`Sent ${results.length} results to client.`);
+    res.send({
+        results,
+        time
+    });
+});
+
 app.listen(port, '0.0.0.0', () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });

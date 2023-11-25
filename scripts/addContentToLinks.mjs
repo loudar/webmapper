@@ -33,12 +33,15 @@ let jobs = [];
 const scraper = new Scraper();
 
 async function saveContentToLink(content, link) {
+    if (!content) {
+        content = "[nocontent]";
+    }
     const query = "UPDATE links SET content = ? WHERE id = ?";
     const startTime = new Date();
     await db.query(query, [content, link.id]);
     const endTime = new Date();
     done++;
-    console.log(`+ ${content.length} in ${Util.formatTime(endTime - startTime)} | ${done}/${links.length}`);
+    console.log(`+ ${content ? content.length : 0} in ${Util.formatTime(endTime - startTime)} | ${done}/${links.length}`);
 }
 
 async function jobFunction(link, index) {
@@ -58,14 +61,14 @@ async function jobFunction(link, index) {
         return;
     }
     let content = HtmlCleaner.clean(res.data);
-    if (content.length === 0) {
+    if (content && content.length === 0) {
         console.log(`Skipping ${link.link} because it's too short.`);
         done++;
         await saveContentToLink("[shortcontent]", link);
         return;
     }
     const limitMb = 5;
-    if (content.length > limitMb * 1024 * 1024) {
+    if (content && content.length > limitMb * 1024 * 1024) {
         const percentOver = Math.round((content.length - limitMb * 1024 * 1024) / (limitMb * 1024 * 1024) * 100);
         console.log(`Skipping ${link.link} because it's too long (${content.length}, +${percentOver}).`);
         done++;

@@ -1,25 +1,39 @@
 import path from "path";
 import {spawn} from "child_process";
 import dotenv from "dotenv";
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 dotenv.config();
 const dirname = path.resolve();
 
 export default {
-    entry: [
-        "./web/index.mjs"
-    ],
+    entry: {
+        index: "./web/index.mjs",
+        search: "./web/search.mjs",
+    },
     mode: "development",
     output: {
-        filename: "index.mjs",
+        filename: "[name].mjs",
         path: path.resolve(dirname, "dist"),
     },
+    plugins: [
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: './web/index.html',
+            chunks: ['index']
+        }),
+        new HtmlWebpackPlugin({
+            filename: 'search.html',
+            template: './web/search.html',
+            chunks: ['search']
+        })
+    ],
     devServer: {
         static: {
             directory: path.join(dirname, "web"),
         },
         open: {
-            target: ["/index.html"]
+            target: ["/search.html"]
         },
         client: {
             overlay: false,

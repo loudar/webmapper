@@ -24,4 +24,12 @@ export class Api {
         }
         return await res.data;
     }
+
+    static async search(query) {
+        const res = await axios.get(`http://localhost:3000/search?query=${query}`);
+        if (res.status !== 200 && res.status !== 304) {
+            throw new Error(`Failed to search: ${res.status}`);
+        }
+        return await res.data;
+    }
 }
