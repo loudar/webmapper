@@ -11,17 +11,21 @@ const query = `SELECT * FROM links WHERE content IS NOT NULL`;
 const links = await db.query(query);
 let done = 0;
 let jobs = [];
+const percentages = [];
 
 async function jobFunction(link, index) {
     console.log(`-> ${link.link} (${index}/${links.length})`);
     let raw = link.content;
     let content = HtmlCleaner.clean(raw);
-    console.log(`... ${content.length} | ${done}/${links.length}`)
+    const newLength = content ? content.length : 0;
+    console.log(`... ${newLength} | ${done}/${links.length}`)
     const query = "UPDATE links SET content = ? WHERE id = ?";
     const startTime = new Date();
     await db.query(query, [content, link.id]);
     const endTime = new Date();
-    console.log(`~ ${content.length} in ${Util.formatTime(endTime - startTime)} | ${done}/${links.length}`);
+    const percentChanged = Math.round((newLength - raw.length) / raw.length * 100);
+    percentages.push(percentChanged);
+    console.log(`~ ${newLength} in ${Util.formatTime(endTime - startTime)} | ${done}/${links.length} | ${percentChanged}%`);
     done++;
 }
 
@@ -38,5 +42,8 @@ for (const link of links) {
     }
 }
 await Promise.all(jobs);
+
+const average = percentages.reduce((a, b) => a + b, 0) / percentages.length;
+console.log(`Average percent change: ${average}%`);
 
 process.exit(0);

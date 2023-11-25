@@ -19,6 +19,8 @@ const excludeTerms = [
     "linkedin",
     "bing",
     "twitter",
+    "crunchbase",
+    ".mp4",
     "aka.ms"
 ];
 let excludeQuery = excludeTerms.map(() => `link NOT LIKE ?`).join(' AND ');
@@ -29,22 +31,8 @@ let done = 0;
 let jobs = [];
 
 const scraper = new Scraper();
-async function jobFunction(link, index) {
-    console.log(`-> ${link.link} (${index}/${links.length})`);
-    const linkHost = Util.getHost(link.link);
-    const res = await scraper.getPage(linkHost, link.link);
-    if (res.isFileDownload) {
-        console.log(`Skipping ${link.link} because it's a file download.`);
-        done++;
-        return;
-    }
-    let content = res.data;
-    if (!content) {
-        done++;
-        console.error(`Failed to get content for ${link.link} (${done}/${links.length})`);
-        return;
-    }
-    content = HtmlCleaner.clean(content);
+
+async function saveContentToLink(content, link) {
     const query = "UPDATE links SET content = ? WHERE id = ?";
     const startTime = new Date();
     await db.query(query, [content, link.id]);
@@ -53,7 +41,41 @@ async function jobFunction(link, index) {
     console.log(`+ ${content.length} in ${Util.formatTime(endTime - startTime)} | ${done}/${links.length}`);
 }
 
-const semaphore = new Semaphore(100);
+async function jobFunction(link, index) {
+    console.log(`-> ${link.link} (${index}/${links.length})`);
+    const linkHost = Util.getHost(link.link);
+    const res = await scraper.getPage(linkHost, link.link);
+    if (res.isFileDownload) {
+        console.log(`Skipping ${link.link} because it's a file download.`);
+        done++;
+        await saveContentToLink("[download]", link);
+        return;
+    }
+    if (!res.data) {
+        done++;
+        console.error(`Failed to get content for ${link.link} (${done}/${links.length})`);
+        await saveContentToLink("[nocontent]", link);
+        return;
+    }
+    let content = HtmlCleaner.clean(res.data);
+    if (content.length === 0) {
+        console.log(`Skipping ${link.link} because it's too short.`);
+        done++;
+        await saveContentToLink("[shortcontent]", link);
+        return;
+    }
+    const limitMb = 5;
+    if (content.length > limitMb * 1024 * 1024) {
+        const percentOver = Math.round((content.length - limitMb * 1024 * 1024) / (limitMb * 1024 * 1024) * 100);
+        console.log(`Skipping ${link.link} because it's too long (${content.length}, +${percentOver}).`);
+        done++;
+        await saveContentToLink("[longcontent]", link);
+        return;
+    }
+    await saveContentToLink(content, link);
+}
+
+const semaphore = new Semaphore(10);
 
 async function processBatch(links) {
     let i = 0;
