@@ -18,7 +18,7 @@ export class SearchTemplates {
                     const searchResultContainer = document.querySelector('#search-results');
                     searchResultContainer.innerHTML = "";
                     searchResultContainer.appendChild(SearchTemplates.time(results.results.length, results.time));
-                    searchResultContainer.appendChild(SearchTemplates.resultList(results.results));
+                    searchResultContainer.appendChild(SearchTemplates.resultList(results.results, query));
                 }
             })
             .build();
@@ -45,28 +45,42 @@ export class SearchTemplates {
             .build();
     }
 
-    static resultList(list) {
+    static resultList(list, query) {
         return FJS.create("div")
             .classes("search-results", "flex-v")
             .children(...list.map(entry => {
-                return SearchTemplates.resultEntry(entry);
+                return SearchTemplates.resultEntry(entry, query);
             }))
             .build();
     }
 
-    static resultEntry(entry) {
+    static resultEntry(entry, query) {
         return FJS.create("div")
-            .classes("search-result", "flex-v", "padded")
+            .classes("search-result", "flex-v", "padded", "rounded")
             .children(
                 FJS.create("a")
                     .classes("search-result-link")
                     .attributes("href", entry.link)
                     .text(entry.link)
                     .build(),
-                FJS.create("div")
-                    .classes("search-result-content", "text-small")
-                    .text(entry.preview)
-                    .build()
+                SearchTemplates.preview(entry.preview, query)
             ).build();
+    }
+
+    static preview(text, query) {
+        text = "..." + text + "...";
+        const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        let parts = text.split(new RegExp(`(${escapeRegExp(query)})`, 'gi'));
+        let spanElements = parts.map((part) => {
+            return FJS.create("span")
+                .classes(part.toLowerCase() === query.toLowerCase() ? 'highlight' : '_', 'search-result-preview-part')
+                .text(part)
+                .build();
+        });
+
+        return FJS.create("div")
+            .classes("search-result-content", "text-small")
+            .children(...spanElements)
+            .build();
     }
 }

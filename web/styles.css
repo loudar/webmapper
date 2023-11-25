@@ -129,6 +129,7 @@ a:hover {
 
 .search-result {
     max-width: max-content;
+    background: var(--background);
 }
 
 .text-small {
@@ -146,4 +147,13 @@ a:hover {
 #search-container {
     max-width: max-content;
     margin: 0 auto;
+}
+
+.search-result-preview-part {
+    color: var(--foreground-dark);
+}
+
+.search-result-preview-part.highlight {
+    font-weight: 900;
+    color: var(--foreground-light);
 }
