@@ -2,6 +2,7 @@ import path from "path";
 import {spawn} from "child_process";
 import dotenv from "dotenv";
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import open from 'open';
 
 dotenv.config();
 const dirname = path.resolve();
@@ -11,7 +12,7 @@ export default {
         index: "./web/index.mjs",
         search: "./web/search.mjs",
     },
-    mode: "development",
+    mode: "production",
     output: {
         filename: "[name].mjs",
         path: path.resolve(dirname, "dist"),
@@ -27,23 +28,7 @@ export default {
             template: './web/search.html',
             chunks: ['search']
         })
-    ],
-    devServer: {
-        static: {
-            directory: path.join(dirname, "web"),
-        },
-        open: {
-            target: ["/search.html"]
-        },
-        client: {
-            overlay: false,
-        },
-        compress: true,
-        port: 3334,
-        devMiddleware: {
-            writeToDisk: true,
-        },
-    },
+    ]
 };
 
 const child = spawn('node ./server.mjs', [
@@ -57,3 +42,5 @@ child.stdout.on('data', function (data) {
 child.stderr.on('data', function (data) {
     process.stderr.write(data);
 });
+
+open('http://localhost:3000/search.html')

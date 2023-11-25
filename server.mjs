@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import {DB} from "./lib/DB.mjs";
 import dotenv from "dotenv";
+import path from "path";
 
 dotenv.config();
 const app = express();
@@ -10,7 +11,7 @@ const port = 3000;
 
 const db_url = process.env.MYSQL_URL.toString();
 console.log(`Connecting to database at url ${db_url}...`);
-const origin = db_url === "data.targoninc.com" ? "http://localhost:3334" : "https://smallgoogle.com";
+const origin = db_url === "data.targoninc.com" ? "http://localhost:3000" : "https://smallgoogle.com";
 console.log(`Using origin ${origin}...`);
 app.use(cors({ origin }));
 
@@ -66,6 +67,10 @@ app.get("/contentStatus", async (req, res) => {
     console.log(`Sent content status to client.`);
     res.send(status);
 });
+
+const dirname = path.resolve();
+app.use('/', express.static(path.join(dirname, "dist")));
+app.use(express.static(path.join(dirname, "web")));
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Example app listening at http://localhost:${port}`)
