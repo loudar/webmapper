@@ -1,8 +1,10 @@
 import axios from "axios";
 
+const api_url = "https://api.smallgoogle.com";
+
 export class Api {
     static async addSite(url) {
-        const res = await axios.get(`http://localhost:3000/addSite?url=${url}`);
+        const res = await axios.get(`${api_url}/addSite?url=${url}`);
         if (res.status !== 200 && res.status !== 304) {
             throw new Error(`Failed to get links for ${url}`);
         }
@@ -10,7 +12,7 @@ export class Api {
     }
 
     static async getLinks() {
-        const res = await axios.get("http://localhost:3000/getLinks");
+        const res = await axios.get(`${api_url}/getLinks`);
         if (res.status !== 200 && res.status !== 304) {
             throw new Error(`Failed to get links: ${res.status}`);
         }
@@ -18,7 +20,7 @@ export class Api {
     }
 
     static async getClusters() {
-        const res = await axios.get("http://localhost:3000/getClusters");
+        const res = await axios.get(`${api_url}/getClusters`);
         if (res.status !== 200 && res.status !== 304) {
             throw new Error(`Failed to get clusters: ${res.status}`);
         }
@@ -26,7 +28,7 @@ export class Api {
     }
 
     static async search(query) {
-        const res = await axios.get(`http://localhost:3000/search?query=${query}`);
+        const res = await axios.get(`${api_url}/search?query=${query}`);
         if (res.status !== 200 && res.status !== 304) {
             throw new Error(`Failed to search: ${res.status}`);
         }
@@ -34,7 +36,7 @@ export class Api {
     }
 
     static async contentStatus() {
-        const res = await axios.get(`http://localhost:3000/contentStatus`);
+        const res = await axios.get(`${api_url}/contentStatus`);
         if (res.status !== 200) {
             throw new Error(`Failed to get content status: ${res.status}`);
         }

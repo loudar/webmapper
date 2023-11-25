@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 const port = 3000;
 
-app.use(cors({ origin: 'http://localhost:3334' }));
+app.use(cors({ origin: 'https://smallgoogle.com' }));
 
 const db = new DB("data.targoninc.com");
 await db.connect();
@@ -64,5 +64,5 @@ app.get("/contentStatus", async (req, res) => {
 });
 
 app.listen(port, '0.0.0.0', () => {
-    console.log(`Example app listening at http://localhost:${port}`);
+    console.log(`Example app listening at https://api.smallgoogle.com`);
 });
