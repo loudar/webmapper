@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const api_url = "http://localhost:3000";
+const api_url = "";
 
 export class Api {
     static async addSite(url) {
