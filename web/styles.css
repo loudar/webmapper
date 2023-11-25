@@ -164,3 +164,20 @@ a:hover {
     font-weight: 900;
     color: var(--accent);
 }
+
+.search-loading-spinner {
+    width: 14px;
+    height: 14px;
+    animation: spin 1s linear infinite;
+    border-top: 2px solid var(--foreground-dark);
+    border-radius: 50%;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

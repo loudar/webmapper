@@ -1,6 +1,7 @@
 import {FJS} from "@targoninc/fjs";
 import {Util} from "../../lib/Util.mjs";
 import {Api} from "../Api.mjs";
+import {SearchAdapter} from "../SearchAdapter.mjs";
 
 export class SearchTemplates {
     static input() {
@@ -10,15 +11,7 @@ export class SearchTemplates {
             .onchange(async (e) => {
                 const query = e.target.value;
                 if (query.length > 0) {
-                    const loadingContainer = document.querySelector('#search-loading');
-                    loadingContainer.innerHTML = "";
-                    loadingContainer.appendChild(SearchTemplates.loading());
-                    const results = await Api.search(query);
-                    loadingContainer.innerHTML = "";
-                    const searchResultContainer = document.querySelector('#search-results');
-                    searchResultContainer.innerHTML = "";
-                    searchResultContainer.appendChild(SearchTemplates.time(results.results.length, results.time));
-                    searchResultContainer.appendChild(SearchTemplates.resultList(results.results, query));
+                    await SearchAdapter.search(query);
                 }
             })
             .build();
@@ -26,7 +19,7 @@ export class SearchTemplates {
 
     static loading() {
         return FJS.create("div")
-            .classes("search-loading")
+            .classes("search-loading", "flex")
             .children(
                 FJS.create("div")
                     .classes("search-loading-spinner")
