@@ -11,7 +11,7 @@ export default {
         index: "./web/index.mjs",
         search: "./web/search.mjs",
     },
-    mode: "production",
+    mode: "development",
     output: {
         filename: "[name].mjs",
         path: path.resolve(dirname, "dist"),
