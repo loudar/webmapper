@@ -55,15 +55,19 @@ export class SearchTemplates {
     }
 
     static resultEntry(entry, query) {
-        return FJS.create("div")
-            .classes("search-result", "flex-v", "padded", "rounded")
+        return FJS.create("a")
+            .classes("search-result-link")
+            .attributes("href", entry.link, "target", "_blank")
             .children(
-                FJS.create("a")
-                    .classes("search-result-link")
-                    .attributes("href", entry.link)
-                    .text(entry.link)
-                    .build(),
-                SearchTemplates.preview(entry.preview, query)
+                FJS.create("div")
+                    .classes("search-result", "flex-v", "padded", "rounded")
+                    .children(
+                        FJS.create("span")
+                            .classes("search-result-link")
+                            .text(entry.link)
+                            .build(),
+                        SearchTemplates.preview(entry.preview, query)
+                    ).build()
             ).build();
     }
 

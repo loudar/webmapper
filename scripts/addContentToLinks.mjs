@@ -10,18 +10,7 @@ const db = new DB("data.targoninc.com");
 await db.connect();
 
 const excludeTerms = [
-    "microsoft",
-    "xbox",
-    "whatsapp",
-    "google",
-    "azure",
-    "skype",
-    "linkedin",
-    "bing",
-    "twitter",
-    "crunchbase",
-    ".mp4",
-    "aka.ms"
+    ".mp4"
 ];
 let excludeQuery = excludeTerms.map(() => `link NOT LIKE ?`).join(' AND ');
 let bindVariables = excludeTerms.map(term => `%${term}%`);
@@ -38,9 +27,13 @@ async function saveContentToLink(content, link) {
     }
     const query = "UPDATE links SET content = ? WHERE id = ?";
     const startTime = new Date();
-    await db.query(query, [content, link.id]);
+    try {
+        await db.query(query, [content, link.id]);
+    } catch (e) {
+        console.error(`Failed to save content for ${link.id} (${link.link}) with ${content}: ${e}`);
+        throw e;
+    }
     const endTime = new Date();
-    done++;
     console.log(`+ ${content ? content.length : 0} in ${Util.formatTime(endTime - startTime)} | ${done}/${links.length}`);
 }
 
@@ -75,6 +68,7 @@ async function jobFunction(link, index) {
         await saveContentToLink("[longcontent]", link);
         return;
     }
+    done++;
     await saveContentToLink(content, link);
 }
 

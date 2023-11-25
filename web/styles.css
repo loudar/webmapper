@@ -121,6 +121,7 @@ input {
 a {
     color: var(--accent);
     text-decoration: none;
+    word-wrap: anywhere;
 }
 
 a:hover {

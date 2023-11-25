@@ -39,7 +39,9 @@ app.get("/search", async (req, res) => {
     const query = req.query.query;
     console.log(`Client searched for "${query}"...`);
     const startTime = new Date();
-    const results = await db.searchExplicit(query);
+    const linkResults = await db.searchLinksExplicit(query);
+    const contentResults = await db.searchContentExplicit(query);
+    const results = [...linkResults, ...contentResults];
     const endTime = new Date();
     const time = endTime - startTime;
     console.log(`Sent ${results.length} results to client.`);
