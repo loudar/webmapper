@@ -1,6 +1,6 @@
 import {DB} from "../lib/DB.mjs";
 
-const db = new DB("data.targoninc.com");
+const db = new DB(process.env.MYSQL_URL);
 await db.connect();
 
 const query = "SELECT * FROM links WHERE link LIKE '%/'";

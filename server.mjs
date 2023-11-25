@@ -10,7 +10,7 @@ const port = 3000;
 
 app.use(cors({ origin: 'https://smallgoogle.com' }));
 
-const db = new DB("data.targoninc.com");
+const db = new DB(process.env.MYSQL_URL);
 await db.connect();
 const scraper = new Scraper();
 
