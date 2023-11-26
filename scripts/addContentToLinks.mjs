@@ -6,7 +6,7 @@ import {HtmlCleaner} from "../lib/HtmlCleaner.mjs";
 import {Semaphore} from "../lib/Semaphore.mjs";
 
 dotenv.config();
-const db = new DB(process.env.MYSQL_URL);
+const db = new DB("data.targoninc.com");
 await db.connect();
 
 const excludeTerms = [

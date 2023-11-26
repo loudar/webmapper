@@ -18,7 +18,7 @@ export class StatusTemplates {
                     .children(
                         FJS.create("div")
                             .classes("flex-grow")
-                            .text(`${status.total_content_size} -> ${status.estimated_total_size}`)
+                            .text(`${status.total_content_size} / ${status.total_links}`)
                             .build(),
                         FJS.create("div")
                             .text(status.percentage_done + " indexed")
