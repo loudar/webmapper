@@ -20,7 +20,10 @@ await db.connect();
 const scraper = new Scraper();
 
 app.use((req, res, next) => {
-    console.log(`Request: ${req.method} ${req.url}`);
+    const debug = process.env.DEBUG === "true";
+    if (debug) {
+        console.log(`Request: ${req.method} ${req.url}`);
+    }
     next();
 });
 
