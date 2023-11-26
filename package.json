@@ -5,8 +5,10 @@
   "main": "server.mjs",
   "type": "module",
   "scripts": {
+    "build": "webpack --config webpack.config.js",
     "server": "node server.mjs",
-    "start": "webpack serve --config webpack.config.js"
+    "start": "npm run build && npm run server",
+    "startLocal": "npm run build && npm run server && open http://localhost:3000"
   },
   "author": "",
   "license": "ISC",
