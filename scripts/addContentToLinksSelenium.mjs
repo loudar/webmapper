@@ -14,7 +14,7 @@ const excludeTerms = [
 ];
 let excludeQuery = excludeTerms.map(() => `link NOT LIKE ?`).join(' AND ');
 let bindVariables = excludeTerms.map(term => `%${term}%`);
-const query = `SELECT * FROM links WHERE status = 200 AND content IS NOT NULL AND ${excludeQuery} LIMIT 10`;
+const query = `SELECT * FROM links WHERE status = 200 AND content = '[nocontent]' AND ${excludeQuery} LIMIT 5000`;
 let links = await db.query(query, bindVariables);
 let total = links.length;
 let done = 0;
@@ -28,14 +28,13 @@ async function jobFunction(link, index) {
     const res = await scraper.getPageSelenium(linkHost, link.link);
     const content = HtmlCleaner.getContent(res);
     const startTime = new Date();
-    console.log(`- ${content}`);
-    //await db.saveContentToLink(content, link);
+    await db.saveContentToLink(content, link);
     const endTime = new Date();
     done++;
     console.log(`+ ${content ? content.length : 0} in ${Util.formatTime(endTime - startTime)} | ${done}/${total}`);
 }
 
-const semaphore = new Semaphore(10);
+const semaphore = new Semaphore(5);
 
 async function processBatch(links) {
     let i = 0;
@@ -54,8 +53,7 @@ async function processBatch(links) {
 while (links.length > 0) {
     await processBatch(links);
     console.log("Done batch");
-    //links = await db.query(query, bindVariables);
-    links = [];
+    links = await db.query(query, bindVariables);
     total += links.length;
 }
 
