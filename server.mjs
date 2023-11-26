@@ -19,6 +19,11 @@ const db = new DB(process.env.MYSQL_URL);
 await db.connect();
 const scraper = new Scraper();
 
+app.use((req, res, next) => {
+    console.log(`Request: ${req.method} ${req.url}`);
+    next();
+});
+
 app.get("/addSite", async (req, res) => {
     const newUrl = req.query.url;
     const onlyNew = req.query.new === "true";
