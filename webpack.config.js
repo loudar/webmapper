@@ -12,7 +12,7 @@ export default {
     },
     mode: "production",
     output: {
-        filename: "[name].mjs",
+        filename: "[name].bundled.mjs",
         path: path.resolve(dirname, "dist"),
     },
     plugins: [

@@ -119,7 +119,9 @@ input {
 
 .search-input {
     font-size: 18px;
-    width: 100%;
+    width: calc(100% - 32px);
+    position: sticky;
+    top: 10px;
 }
 
 a {

@@ -25,7 +25,7 @@ window.onload = async () => {
     const input = SearchTemplates.input();
     const urlQuery = new URLSearchParams(window.location.search);
     const query = urlQuery.get('query');
-    searchBarContainer.appendChild(input);
+    searchBarContainer.replaceWith(input);
     if (query) {
         input.value = query;
         await SearchAdapter.search(query);
