@@ -4,6 +4,7 @@ import cors from "cors";
 import {DB} from "./lib/DB.mjs";
 import dotenv from "dotenv";
 import path from "path";
+import {fileURLToPath} from "url";
 
 dotenv.config();
 const app = express();
@@ -74,9 +75,10 @@ app.get("/contentStatus", async (req, res) => {
     res.send(status);
 });
 
-const dirname = path.resolve();
-app.use('/', express.static(path.join(dirname, "dist")));
-app.use(express.static(path.join(dirname, "web")));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use('/', express.static(path.join(__dirname, "dist")));
+app.use(express.static(path.join(__dirname, "web")));
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Example app listening at http://localhost:${port}`)
