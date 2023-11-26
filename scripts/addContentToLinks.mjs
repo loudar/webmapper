@@ -22,50 +22,15 @@ let jobs = [];
 
 const scraper = new Scraper();
 
-async function saveContentToLink(content, link) {
-    if (!content) {
-        content = "[nocontent]";
-    }
-    const query = "UPDATE links SET content = ? WHERE id = ?";
-    try {
-        await db.query(query, [content, link.id]);
-    } catch (e) {
-        console.error(`Failed to save content for ${link.id} (${link.link}) with ${content}: ${e}`);
-        throw e;
-    }
-    done++;
-}
-
 async function jobFunction(link, index) {
     console.log(`-> ${link.link} (${index}/${total})`);
     const linkHost = Util.getHost(link.link);
     const res = await scraper.getPage(linkHost, link.link);
-    if (res.isFileDownload) {
-        await saveContentToLink("[download]", link);
-        console.log(`Skipping ${link.link} because it's a file download. (${done}/${total})`);
-        return;
-    }
-    if (!res.data) {
-        await saveContentToLink("[nocontent]", link);
-        console.error(`Failed to get content for ${link.link} (${done}/${total})`);
-        return;
-    }
-    let content = HtmlCleaner.clean(res.data);
-    if (content && content.length === 0) {
-        await saveContentToLink("[shortcontent]", link);
-        console.log(`Skipping ${link.link} because it's too short. (${done}/${total})`);
-        return;
-    }
-    const limitMb = 5;
-    if (content && content.length > limitMb * 1024 * 1024) {
-        const percentOver = Math.round((content.length - limitMb * 1024 * 1024) / (limitMb * 1024 * 1024) * 100);
-        await saveContentToLink("[longcontent]", link);
-        console.log(`Skipping ${link.link} because it's too long (${content.length}, +${percentOver}). (${done}/${total})`);
-        return;
-    }
+    const content = HtmlCleaner.getContent(res);
     const startTime = new Date();
-    await saveContentToLink(content, link);
+    await db.saveContentToLink(content, link);
     const endTime = new Date();
+    done++;
     console.log(`+ ${content ? content.length : 0} in ${Util.formatTime(endTime - startTime)} | ${done}/${total}`);
 }
 

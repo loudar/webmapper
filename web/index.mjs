@@ -1,7 +1,12 @@
 import {Updater} from "./Updater.mjs";
 
-document.addEventListener("keydown", async (event) => {
+let requested = false;
+document.addEventListener("keyup", async (event) => {
     if (event.key === "i") {
+        if (requested) {
+            return;
+        }
+        requested = true;
         await Updater.updateClusters();
 
         const intervalSeconds = 60 * 30;
