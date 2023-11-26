@@ -15,7 +15,7 @@ function triggerLoadStatus() {
     loadStatus().then(() => {
         setInterval(async () => {
             await loadStatus();
-        }, 1000 * 30);
+        }, 1000 * 60);
     });
 }
 
