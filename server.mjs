@@ -12,9 +12,7 @@ const port = 3000;
 
 const db_url = process.env.MYSQL_URL.toString();
 console.log(`Connecting to database at url ${db_url}...`);
-const origin = db_url === "data.targoninc.com" ? "http://localhost:3000" : "https://smallgoogle.com";
-console.log(`Using origin ${origin}...`);
-app.use(cors({ origin }));
+app.use(cors());
 app.use(express.json());
 
 const db = new DB(process.env.MYSQL_URL);
