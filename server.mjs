@@ -96,6 +96,13 @@ app.get("/api/getStatistics", async (req, res) => {
     res.send(status);
 });
 
+app.get("/api/getContentStatus", async (req, res) => {
+    console.log(`Client requested content status...`);
+    const status = await db.getContentStatus();
+    console.log(`Sent content status to client.`);
+    res.send(status);
+});
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use('/', express.static(path.join(__dirname, "dist")));

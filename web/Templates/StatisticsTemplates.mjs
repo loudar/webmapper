@@ -14,14 +14,14 @@ export class StatisticsTemplates {
     }
 
     static stats(statistics) {
-        const canvas = FJS.create("canvas").build();
+        const canvas = FJS.create("canvas").classes("chart").build();
         const ctx = canvas.getContext("2d");
 
         const labels = statistics.map(entry => new Date(entry.created_at));
         const countData = statistics.map(entry => entry.count);
         const interlinkData = statistics.map(entry => entry.interlink_count);
 
-        new Chart(ctx, {
+        const chart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
@@ -41,13 +41,17 @@ export class StatisticsTemplates {
                 ]
             },
             options: {
+                responsive: false,
+                maintainAspectRatio: false,
                 scales: {
                     x: {
                         type: 'time',
                         time: {
-                            unit: 'day'
+                            unit: 'hour',
                         },
                         ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 288,
                             callback: function(tickValue, index, ticks) {
                                 return moment(tickValue).format('HH:mm');
                             }
@@ -56,6 +60,12 @@ export class StatisticsTemplates {
                 }
             }
         });
+
+        setTimeout(() => {
+            new ResizeObserver(() => {
+                chart.resize();
+            }).observe(canvas);
+        }, 100);
 
         return canvas;
     }

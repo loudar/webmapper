@@ -42,4 +42,12 @@ export class Api {
         }
         return await res.data;
     }
+
+    static async getContentStatus() {
+        const res = await axios.get(`${api_url}/getContentStatus`);
+        if (res.status !== 200) {
+            throw new Error(`Failed to get content status: ${res.status}`);
+        }
+        return await res.data;
+    }
 }
