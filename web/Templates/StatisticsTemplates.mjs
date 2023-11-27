@@ -1,5 +1,7 @@
 import {FJS} from "@targoninc/fjs";
-import Chart from 'chart.js/auto'; // Import chart.js library
+import Chart from 'chart.js/auto';
+import moment from 'moment';
+import 'chartjs-adapter-moment';
 
 export class StatisticsTemplates {
     static statsContainer(statistics) {
@@ -39,15 +41,18 @@ export class StatisticsTemplates {
                 ]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
                 scales: {
-                    xAxes: [{
+                    x: {
                         type: 'time',
                         time: {
                             unit: 'day'
+                        },
+                        ticks: {
+                            callback: function(tickValue, index, ticks) {
+                                return moment(tickValue).format('HH:mm');
+                            }
                         }
-                    }]
+                    }
                 }
             }
         });
