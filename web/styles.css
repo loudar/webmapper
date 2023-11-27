@@ -147,6 +147,10 @@ a:hover {
     background: var(--background-dark);
 }
 
+#search-results:empty {
+    display: none;
+}
+
 .search-results, #search-results, .search-result-link {
     max-width: max-content;
 }

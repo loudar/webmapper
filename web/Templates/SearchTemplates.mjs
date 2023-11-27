@@ -11,6 +11,10 @@ export class SearchTemplates {
                 const query = e.target.value;
                 if (query.length > 0) {
                     await SearchAdapter.search(query);
+                } else {
+                    window.history.pushState({}, "");
+                    const searchResultContainer = document.querySelector('#search-results');
+                    searchResultContainer.innerHTML = "";
                 }
             })
             .build();
