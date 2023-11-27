@@ -199,3 +199,8 @@ a:hover {
     border-radius: 3px;
     background: var(--accent);
 }
+
+.search-result-type {
+    word-wrap: break-word;
+    font-size: 12px;
+}

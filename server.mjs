@@ -52,19 +52,39 @@ app.get("/search", async (req, res) => {
     const query = req.query.query;
     console.log(`Client searched for "${query}"...`);
     const startTime = new Date();
-    const linkResults = await db.searchLinksExplicit(query);
-    const contentResults = await db.searchContentExplicit(query);
+    const linkResults = (await db.searchLinksExplicit(query)).map(r => {
+        r.resultType = "link";
+        return r;
+    });
+    const contentResults = (await db.searchContentExplicit(query)).map(r => {
+        r.resultType = "content";
+        return r;
+    });
     const results = [...linkResults, ...contentResults];
     if (results.length < 100) {
-        const fuzzyLinkResults = await db.searchLinksFuzzy(query);
-        const fuzzyContentResults = await db.searchContentFuzzy(query);
-        results.push(...fuzzyLinkResults, ...fuzzyContentResults);
+        const fuzzyLinkResults = (await db.searchLinksFuzzy(query)).map(r => {
+            r.resultType = "linkFuzzy";
+            return r;
+        });
+        const fuzzyContentResults = (await db.searchContentFuzzy(query)).map(r => {
+            r.resultType = "contentFuzzy";
+            return r;
+        });
+        results.push(...fuzzyLinkResults, ...fuzzyContentResults)
+    }
+    const uniqueResults = [];
+    const uniqueUrls = [];
+    for (const result of results) {
+        if (!uniqueUrls.includes(result.link)) {
+            uniqueResults.push(result);
+            uniqueUrls.push(result.link);
+        }
     }
     const endTime = new Date();
     const time = endTime - startTime;
-    console.log(`Sent ${results.length} results to client.`);
+    console.log(`Sent ${uniqueResults.length} results to client.`);
     res.send({
-        results,
+        results: uniqueResults,
         time
     });
 });

@@ -1,6 +1,5 @@
 import {FJS} from "@targoninc/fjs";
 import {Util} from "../../lib/Util.mjs";
-import {Api} from "../Api.mjs";
 import {SearchAdapter} from "../SearchAdapter.mjs";
 
 export class SearchTemplates {
@@ -55,10 +54,39 @@ export class SearchTemplates {
                 FJS.create("div")
                     .classes("search-result", "flex-v", "padded", "rounded")
                     .children(
-                        SearchTemplates.title(entry.link.replace(/https?:\/\//, '').replace(/http?:\/\//, ''), query, query),
+                        FJS.create("div")
+                            .classes("search-result-header", "flex")
+                            .children(
+                                SearchTemplates.resultType(entry.resultType),
+                                SearchTemplates.title(entry.link.replace(/https?:\/\//, '').replace(/http?:\/\//, ''), query, query)
+                            ).build(),
                         SearchTemplates.preview(entry.preview, query)
                     ).build()
             ).build();
+    }
+
+    static resultType(type) {
+        let text;
+        switch (type) {
+            case "link":
+                text = "⭐⭐";
+                break;
+            case "linkFuzzy":
+                text = "⭐";
+                break;
+            case "content":
+                text = "🌟🌟";
+                break;
+            case "contentFuzzy":
+                text = "🌟";
+                break;
+            default:
+                text = "";
+        }
+        return FJS.create("div")
+            .classes("search-result-type", "text-small", type)
+            .text(text)
+            .build();
     }
 
     static title(title, query) {
