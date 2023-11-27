@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const api_url = "";
+const api_url = "/api";
 
 export class Api {
     static async addSite(url) {
@@ -35,10 +35,10 @@ export class Api {
         return await res.data;
     }
 
-    static async contentStatus() {
-        const res = await axios.get(`${api_url}/contentStatus`);
+    static async getStatistics() {
+        const res = await axios.get(`${api_url}/getStatistics`);
         if (res.status !== 200) {
-            throw new Error(`Failed to get content status: ${res.status}`);
+            throw new Error(`Failed to get statistics: ${res.status}`);
         }
         return await res.data;
     }

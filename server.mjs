@@ -27,7 +27,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get("/addSite", async (req, res) => {
+app.get("/api/addSite", async (req, res) => {
     const newUrl = req.query.url;
     const onlyNew = req.query.new === "true";
     console.log(`Adding links for page ${newUrl} to client...`);
@@ -35,20 +35,20 @@ app.get("/addSite", async (req, res) => {
     console.log(`Done adding links for page ${newUrl}.`);
     res.send({});
 });
-app.get("/getLinks", async (req, res) => {
+app.get("/api/getLinks", async (req, res) => {
     console.log("Client requested links...");
     const links = await db.getLinks(true);
     console.log(`Sent ${Object.keys(links).length} links to client.`);
     res.send(links);
 });
-app.get("/getClusters", async (req, res) => {
+app.get("/api/getClusters", async (req, res) => {
     console.log("Client requested clusters...");
     const clusters = await db.getClustersWithoutSubdomains();
     console.log(`Sent ${clusters.length} clusters to client.`);
     res.send(clusters);
 });
 
-app.get("/search", async (req, res) => {
+app.get("/api/search", async (req, res) => {
     const query = req.query.query;
     console.log(`Client searched for "${query}"...`);
     const startTime = new Date();
@@ -89,10 +89,10 @@ app.get("/search", async (req, res) => {
     });
 });
 
-app.get("/contentStatus", async (req, res) => {
-    console.log(`Client requested content status...`);
-    const status = await db.getContentStatus();
-    console.log(`Sent content status to client.`);
+app.get("/api/getStatistics", async (req, res) => {
+    console.log(`Client requested statistics...`);
+    const status = await db.getStatistics();
+    console.log(`Sent statistics to client.`);
     res.send(status);
 });
 

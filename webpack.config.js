@@ -9,6 +9,7 @@ export default {
     entry: {
         index: "./web/index.mjs",
         search: "./web/search.mjs",
+        stats: "./web/stats.mjs",
     },
     mode: "production",
     output: {
@@ -25,6 +26,11 @@ export default {
             filename: 'search.html',
             template: './web/search.html',
             chunks: ['search']
+        }),
+        new HtmlWebpackPlugin({
+            filename: 'stats.html',
+            template: './web/stats.html',
+            chunks: ['stats']
         })
     ]
 };
