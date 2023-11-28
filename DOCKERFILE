@@ -9,6 +9,9 @@ COPY . .
 
 # Install the project dependencies
 RUN npm install
+RUN apt-get update && apt-get install -y default-jre
+RUN apt-get -f install
+RUN apt-get install -y chromium-browser
 
 # Make the app's ports available to the outside world
 EXPOSE 3000
