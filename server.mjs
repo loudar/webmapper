@@ -17,7 +17,24 @@ app.use(express.json());
 
 const db = new DB(process.env.MYSQL_URL);
 await db.connect();
+
+const batchInterval = 500;
+const concurrency = 5;
+let scraping = false;
+let locked = false;
 const scraper = new Scraper();
+
+setInterval(async () => {
+    if (!scraping) {
+        return;
+    }
+    if (locked) {
+        return;
+    }
+    locked = true;
+    await scraper.scrapeSites(db, concurrency);
+    locked = false;
+}, batchInterval);
 
 app.use((req, res, next) => {
     const debug = process.env.DEBUG === "true";
@@ -29,18 +46,31 @@ app.use((req, res, next) => {
 
 app.get("/api/addSite", async (req, res) => {
     const newUrl = req.query.url;
-    const onlyNew = req.query.new === "true";
-    console.log(`Adding links for page ${newUrl} to client...`);
-    await Scraper.scrapeSites(db, scraper, newUrl, onlyNew);
-    console.log(`Done adding links for page ${newUrl}.`);
+    console.log(`Adding page ${newUrl}...`);
+    const isValidUrl = Scraper.isValidUrl(newUrl);
+    if (!isValidUrl) {
+        console.log(`Invalid url ${newUrl}.`);
+        res.send({});
+        return;
+    }
+    const isDuplicate = await db.getLinkByLink(newUrl);
+    if (isDuplicate) {
+        console.log(`Duplicate url ${newUrl}.`);
+        res.send({});
+        return;
+    }
+    await db.insertLink(newUrl, null, null);
+    console.log(`Done adding page ${newUrl}.`);
     res.send({});
 });
+
 app.get("/api/getLinks", async (req, res) => {
     console.log("Client requested links...");
     const links = await db.getLinks(true);
     console.log(`Sent ${Object.keys(links).length} links to client.`);
     res.send(links);
 });
+
 app.get("/api/getClusters", async (req, res) => {
     console.log("Client requested clusters...");
     const clusters = await db.getClustersWithoutSubdomains();
@@ -101,6 +131,28 @@ app.get("/api/getContentStatus", async (req, res) => {
     const status = await db.getContentStatus();
     console.log(`Sent content status to client.`);
     res.send(status);
+});
+
+app.get("/api/startWork", async (req, res) => {
+    console.log(`Client requested to start work...`);
+    if (scraping) {
+        console.log(`Already working, ignoring request.`);
+        res.send('Already working');
+        return;
+    }
+    scraping = true;
+    res.send('Started');
+});
+
+app.get("/api/stopWork", async (req, res) => {
+    console.log(`Client requested to stop work...`);
+    if (!scraping) {
+        console.log(`Not working, ignoring request.`);
+        res.send('Not working');
+        return;
+    }
+    scraping = false;
+    res.send('Stopped');
 });
 
 const __filename = fileURLToPath(import.meta.url);
