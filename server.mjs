@@ -19,7 +19,8 @@ const db = new DB(process.env.MYSQL_URL);
 await db.connect();
 
 const batchInterval = 500;
-const concurrency = 5;
+const batchSize = 10;
+const concurrency = 3;
 let scraping = false;
 let locked = false;
 const scraper = new Scraper();
@@ -32,7 +33,7 @@ setInterval(async () => {
         return;
     }
     locked = true;
-    await scraper.scrapeSites(db, concurrency);
+    await scraper.scrapeSites(db, concurrency, batchSize);
     locked = false;
 }, batchInterval);
 
