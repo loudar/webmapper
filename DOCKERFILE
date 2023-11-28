@@ -11,7 +11,7 @@ COPY . .
 RUN npm install
 RUN apt-get update && apt-get install -y default-jre
 RUN apt-get -f install
-RUN apt-get install -y chromium-browser
+RUN apt-get install -y chromium
 
 # Make the app's ports available to the outside world
 EXPOSE 3000
