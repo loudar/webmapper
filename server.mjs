@@ -24,6 +24,7 @@ const concurrency = 3;
 let scraping = false;
 let locked = false;
 const scraper = new Scraper();
+const excludedTerms = ['linkedin', 'microsoft', 'bing'];
 
 setInterval(async () => {
     if (!scraping) {
@@ -33,7 +34,7 @@ setInterval(async () => {
         return;
     }
     locked = true;
-    await scraper.scrapeSites(db, concurrency, batchSize);
+    await scraper.scrapeSites(db, concurrency, batchSize, excludedTerms);
     locked = false;
 }, batchInterval);
 
@@ -154,6 +155,30 @@ app.get("/api/stopWork", async (req, res) => {
     }
     scraping = false;
     res.send('Stopped');
+});
+
+app.get("/api/addExcludedTerm", async (req, res) => {
+    const term = req.query.term;
+    console.log(`Client requested to add excluded term ${term}...`);
+    if (excludedTerms.includes(term)) {
+        console.log(`Term ${term} already excluded, ignoring request.`);
+        res.send('Already excluded');
+        return;
+    }
+    excludedTerms.push(term);
+    res.send('Added');
+});
+
+app.get("/api/removeExcludedTerm", async (req, res) => {
+    const term = req.query.term;
+    console.log(`Client requested to remove excluded term ${term}...`);
+    if (!excludedTerms.includes(term)) {
+        console.log(`Term ${term} not excluded, ignoring request.`);
+        res.send('Not excluded');
+        return;
+    }
+    excludedTerms.splice(excludedTerms.indexOf(term), 1);
+    res.send('Removed');
 });
 
 const __filename = fileURLToPath(import.meta.url);
