@@ -124,12 +124,8 @@ app.post("/api/authorize", async (req, res, next) => {
 });
 
 app.post("/api/logout", checkAuthenticated, (req, res) => {
-    req.logout();
-    req.session.save(err => {
-        if (err) {
-            return next(err);
-        }
-        res.send({ message: "User has been successfully logged out." });
+    req.logout(() => {
+        res.send({message: "User has been successfully logged out."});
     });
 });
 

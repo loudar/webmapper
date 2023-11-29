@@ -13,11 +13,18 @@ export class Cookie {
         return cookies;
     }
 
-    static async set(name, value) {
-        document.cookie = `${name}=${value}`;
+    static async set(name, value, days) {
+        let expires = "";
+        if (days) {
+            let date = new Date();
+            date.setTime(date.getTime() + (days*24*60*60*1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+
+        document.cookie = `${name}=${value || ""}`  + expires + "; path=/";
     }
 
     static async remove(name) {
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
     }
 }

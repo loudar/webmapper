@@ -27,6 +27,6 @@ export class Auth {
     static async logout() {
         await Api.logout();
         localStorage.removeItem('user');
-        await Cookie.set('connect.sid', null);
+        await Cookie.remove('connect.sid');
     }
 }

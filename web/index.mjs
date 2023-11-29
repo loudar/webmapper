@@ -8,6 +8,7 @@ import {UserTemplates} from "./Templates/UserTemplates.mjs";
 const routes = [
     { name: 'stats', path: '/stats' },
     { name: 'cluster', path: '/cluster' },
+    { name: 'login', path: '/login' },
     { name: 'profile', path: '/profile' },
     { name: 'search', path: '/search' },
 ];
@@ -18,34 +19,36 @@ const router = createRouter(routes, {
 router.usePlugin(browserPlugin());
 
 router.subscribe(async (route) => {
+    document.body.innerHTML = "";
+    const user = await Auth.user();
     switch (route.route.name) {
         case "stats":
-            document.body.innerHTML = "";
             document.body.appendChild(PageTemplates.stats());
             Page.stats();
             break;
         case "cluster":
-            document.body.innerHTML = "";
             document.body.appendChild(PageTemplates.cluster());
             Page.cluster();
             break;
-        case "profile":
-            document.body.innerHTML = "";
-            const user = await Auth.user();
-            if (user === null) {
-                document.body.appendChild(UserTemplates.login(router));
+        case "login":
+            if (user !== null) {
+                router.navigate("profile");
                 break;
-            } else {
-                document.body.appendChild(PageTemplates.profile(router, user));
             }
+            document.body.appendChild(UserTemplates.login(router));
+            break;
+        case "profile":
+            if (user === null) {
+                router.navigate("login");
+                break;
+            }
+            document.body.appendChild(PageTemplates.profile(router, user));
             break;
         case "search":
-            document.body.innerHTML = "";
             document.body.appendChild(PageTemplates.search());
             await Page.search(route.route.params.query || "");
             break;
         default:
-            document.body.innerHTML = "";
             document.body.appendChild(PageTemplates.search());
             await Page.search(route.route.params.query || "");
             break;
