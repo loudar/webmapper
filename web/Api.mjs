@@ -50,4 +50,25 @@ export class Api {
         }
         return await res.data;
     }
+
+    static async authorize(username, password) {
+        const res = await axios.post(`${api_url}/authorize`, {
+            username,
+            password
+        });
+        if (res.status !== 200) {
+            throw new Error(`Failed to authorize: ${res.status}`);
+        }
+        const data = await res.data;
+        const headers = res.headers;
+        return { user: data, headers };
+    }
+
+    static async logout() {
+        const res = await axios.post(`${api_url}/logout`);
+        if (res.status !== 200) {
+            throw new Error(`Failed to logout: ${res.status}`);
+        }
+        return await res.data;
+    }
 }

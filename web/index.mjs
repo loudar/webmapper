@@ -32,7 +32,8 @@ router.subscribe(async (route) => {
             break;
         case "profile":
             document.body.innerHTML = "";
-            //document.body.appendChild(PageTemplates.profile());
+            const authState = await Page.authState();
+            document.body.appendChild(PageTemplates.profile());
             break;
         case "search":
             document.body.innerHTML = "";

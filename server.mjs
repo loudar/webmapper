@@ -9,6 +9,7 @@ import passport from "passport";
 import session from "express-session";
 import bcrypt from "bcryptjs";
 import passportLocal from "passport-local";
+
 const LocalStrategy = passportLocal.Strategy;
 
 dotenv.config();
@@ -33,10 +34,10 @@ passport.use(new LocalStrategy(
     async (username, password, done) => {
         const user = await db.getUserByUsername(username);
         if (!user) {
-            return done(null, false, { message: 'Incorrect username.' });
+            return done(null, false, {message: 'Incorrect username.'});
         }
         if (!bcrypt.compareSync(password, user.password)) {
-            return done(null, false, { message: 'Incorrect password.' });
+            return done(null, false, {message: 'Incorrect password.'});
         }
         return done(null, user);
     }
@@ -78,7 +79,7 @@ function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
-    res.redirect('/login');
+    res.send({error: "Not authenticated"});
 }
 
 app.use((req, res, next) => {
@@ -89,14 +90,42 @@ app.use((req, res, next) => {
     next();
 });
 
-app.post('/api/register', async (req, res) => {
-    const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-    await db.insertUser(req.body.username, hashedPassword);
-    res.redirect('/login');
+app.post('/api/authorize', async (req, res, next) => {
+    const existing = await db.getUserByUsername(req.body.username);
+    if (!existing) {
+        const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+        await db.insertUser(req.body.username, hashedPassword);
+    }
+
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            console.log(err);
+            return next(err);
+        }
+        if (!user) {
+            return res.send({error: "Invalid username or password"});
+        }
+        req.logIn(user, function (err) {
+            if (err) {
+                return next(err);
+            }
+            const outUser = {
+                id: user.id,
+                username: user.username,
+            };
+            if (!existing) {
+                outUser.justRegistered = true;
+            }
+            return res.send({
+                outUser
+            });
+        });
+    })(req, res, next);
 });
 
-app.post('/api/login', passport.authenticate('local', { failureRedirect: '/login' }), (req, res) => {
-    res.redirect('/');
+app.post('/api/logout', (req, res) => {
+    req.logout();
+    res.send({ message: "User has been successfully logged out." });
 });
 
 app.get("/api/addSite", checkAuthenticated, async (req, res) => {
