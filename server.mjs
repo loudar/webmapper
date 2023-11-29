@@ -5,6 +5,11 @@ import {DB} from "./lib/DB.mjs";
 import dotenv from "dotenv";
 import path from "path";
 import {fileURLToPath} from "url";
+import passport from "passport";
+import session from "express-session";
+import bcrypt from "bcryptjs";
+import passportLocal from "passport-local";
+const LocalStrategy = passportLocal.Strategy;
 
 dotenv.config();
 const app = express();
@@ -14,6 +19,37 @@ const db_url = process.env.MYSQL_URL.toString();
 console.log(`Connecting to database at url ${db_url}...`);
 app.use(cors());
 app.use(express.json());
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(
+    async (username, password, done) => {
+        const user = await db.getUserByUsername(username);
+        if (!user) {
+            return done(null, false, { message: 'Incorrect username.' });
+        }
+        if (!bcrypt.compareSync(password, user.password)) {
+            return done(null, false, { message: 'Incorrect password.' });
+        }
+        return done(null, user);
+    }
+));
+
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+    const user = await db.getUserById(id);
+    done(null, user);
+});
 
 const db = new DB(process.env.MYSQL_URL);
 await db.connect();
@@ -38,6 +74,13 @@ setInterval(async () => {
     locked = false;
 }, batchInterval);
 
+function checkAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
+}
+
 app.use((req, res, next) => {
     const debug = process.env.DEBUG === "true";
     if (debug) {
@@ -46,7 +89,17 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get("/api/addSite", async (req, res) => {
+app.post('/api/register', async (req, res) => {
+    const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+    await db.insertUser(req.body.username, hashedPassword);
+    res.redirect('/login');
+});
+
+app.post('/api/login', passport.authenticate('local', { failureRedirect: '/login' }), (req, res) => {
+    res.redirect('/');
+});
+
+app.get("/api/addSite", checkAuthenticated, async (req, res) => {
     const newUrl = req.query.url;
     console.log(`Adding page ${newUrl}...`);
     const isValidUrl = Scraper.isValidUrl(newUrl);
@@ -135,7 +188,7 @@ app.get("/api/getContentStatus", async (req, res) => {
     res.send(status);
 });
 
-app.get("/api/startWork", async (req, res) => {
+app.get("/api/startWork", checkAuthenticated, async (req, res) => {
     console.log(`Client requested to start work...`);
     if (scraping) {
         console.log(`Already working, ignoring request.`);
@@ -146,7 +199,7 @@ app.get("/api/startWork", async (req, res) => {
     res.send('Started');
 });
 
-app.get("/api/stopWork", async (req, res) => {
+app.get("/api/stopWork", checkAuthenticated, async (req, res) => {
     console.log(`Client requested to stop work...`);
     if (!scraping) {
         console.log(`Not working, ignoring request.`);
@@ -157,7 +210,7 @@ app.get("/api/stopWork", async (req, res) => {
     res.send('Stopped');
 });
 
-app.get("/api/addExcludedTerm", async (req, res) => {
+app.get("/api/addExcludedTerm", checkAuthenticated, async (req, res) => {
     const term = req.query.term;
     console.log(`Client requested to add excluded term ${term}...`);
     if (excludedTerms.includes(term)) {
@@ -169,7 +222,7 @@ app.get("/api/addExcludedTerm", async (req, res) => {
     res.send('Added');
 });
 
-app.get("/api/removeExcludedTerm", async (req, res) => {
+app.get("/api/removeExcludedTerm", checkAuthenticated, async (req, res) => {
     const term = req.query.term;
     console.log(`Client requested to remove excluded term ${term}...`);
     if (!excludedTerms.includes(term)) {
@@ -185,6 +238,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use('/', express.static(path.join(__dirname, "dist")));
 app.use(express.static(path.join(__dirname, "web")));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Example app listening at http://localhost:${port}`)

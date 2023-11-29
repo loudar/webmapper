@@ -7,9 +7,7 @@ const dirname = path.resolve();
 
 export default {
     entry: {
-        index: "./web/index.mjs",
-        search: "./web/search.mjs",
-        stats: "./web/stats.mjs",
+        index: "./web/index.mjs"
     },
     mode: "production",
     output: {
@@ -21,16 +19,6 @@ export default {
             filename: 'index.html',
             template: './web/index.html',
             chunks: ['index']
-        }),
-        new HtmlWebpackPlugin({
-            filename: 'search.html',
-            template: './web/search.html',
-            chunks: ['search']
-        }),
-        new HtmlWebpackPlugin({
-            filename: 'stats.html',
-            template: './web/stats.html',
-            chunks: ['stats']
         })
     ]
 };
