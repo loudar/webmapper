@@ -34,10 +34,10 @@ passport.use(new LocalStrategy(
     async (username, password, done) => {
         const user = await db.getUserByUsername(username);
         if (!user) {
-            return done(null, false, {message: 'Incorrect username.'});
+            return done(null, false, {message: "Incorrect username."});
         }
         if (!bcrypt.compareSync(password, user.password)) {
-            return done(null, false, {message: 'Incorrect password.'});
+            return done(null, false, {message: "Incorrect password."});
         }
         return done(null, user);
     }
@@ -61,7 +61,7 @@ const concurrency = 3;
 let scraping = false;
 let locked = false;
 const scraper = new Scraper();
-const excludedTerms = ['linkedin', 'microsoft', 'bing'];
+const excludedTerms = ["linkedin", "microsoft", "bing"];
 
 setInterval(async () => {
     if (!scraping) {
@@ -90,14 +90,14 @@ app.use((req, res, next) => {
     next();
 });
 
-app.post('/api/authorize', async (req, res, next) => {
+app.post("/api/authorize", async (req, res, next) => {
     const existing = await db.getUserByUsername(req.body.username);
     if (!existing) {
         const hashedPassword = bcrypt.hashSync(req.body.password, 10);
         await db.insertUser(req.body.username, hashedPassword);
     }
 
-    passport.authenticate('local', (err, user, info) => {
+    passport.authenticate("local", (err, user, info) => {
         if (err) {
             console.log(err);
             return next(err);
@@ -117,15 +117,20 @@ app.post('/api/authorize', async (req, res, next) => {
                 outUser.justRegistered = true;
             }
             return res.send({
-                outUser
+                user: outUser
             });
         });
     })(req, res, next);
 });
 
-app.post('/api/logout', (req, res) => {
+app.post("/api/logout", checkAuthenticated, (req, res) => {
     req.logout();
-    res.send({ message: "User has been successfully logged out." });
+    req.session.save(err => {
+        if (err) {
+            return next(err);
+        }
+        res.send({ message: "User has been successfully logged out." });
+    });
 });
 
 app.get("/api/addSite", checkAuthenticated, async (req, res) => {
@@ -221,22 +226,22 @@ app.get("/api/startWork", checkAuthenticated, async (req, res) => {
     console.log(`Client requested to start work...`);
     if (scraping) {
         console.log(`Already working, ignoring request.`);
-        res.send('Already working');
+        res.send("Already working");
         return;
     }
     scraping = true;
-    res.send('Started');
+    res.send("Started");
 });
 
 app.get("/api/stopWork", checkAuthenticated, async (req, res) => {
     console.log(`Client requested to stop work...`);
     if (!scraping) {
         console.log(`Not working, ignoring request.`);
-        res.send('Not working');
+        res.send("Not working");
         return;
     }
     scraping = false;
-    res.send('Stopped');
+    res.send("Stopped");
 });
 
 app.get("/api/addExcludedTerm", checkAuthenticated, async (req, res) => {
@@ -244,11 +249,11 @@ app.get("/api/addExcludedTerm", checkAuthenticated, async (req, res) => {
     console.log(`Client requested to add excluded term ${term}...`);
     if (excludedTerms.includes(term)) {
         console.log(`Term ${term} already excluded, ignoring request.`);
-        res.send('Already excluded');
+        res.send("Already excluded");
         return;
     }
     excludedTerms.push(term);
-    res.send('Added');
+    res.send("Added");
 });
 
 app.get("/api/removeExcludedTerm", checkAuthenticated, async (req, res) => {
@@ -256,22 +261,22 @@ app.get("/api/removeExcludedTerm", checkAuthenticated, async (req, res) => {
     console.log(`Client requested to remove excluded term ${term}...`);
     if (!excludedTerms.includes(term)) {
         console.log(`Term ${term} not excluded, ignoring request.`);
-        res.send('Not excluded');
+        res.send("Not excluded");
         return;
     }
     excludedTerms.splice(excludedTerms.indexOf(term), 1);
-    res.send('Removed');
+    res.send("Removed");
 });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.use('/', express.static(path.join(__dirname, "dist")));
+app.use("/", express.static(path.join(__dirname, "dist")));
 app.use(express.static(path.join(__dirname, "web")));
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
-app.listen(port, '0.0.0.0', () => {
+app.listen(port, "0.0.0.0", () => {
     console.log(`Example app listening at http://localhost:${port}`)
 });

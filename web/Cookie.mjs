@@ -16,4 +16,8 @@ export class Cookie {
     static async set(name, value) {
         document.cookie = `${name}=${value}`;
     }
+
+    static async remove(name) {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+    }
 }

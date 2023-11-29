@@ -59,9 +59,7 @@ export class Api {
         if (res.status !== 200) {
             throw new Error(`Failed to authorize: ${res.status}`);
         }
-        const data = await res.data;
-        const headers = res.headers;
-        return { user: data, headers };
+        return await res.data;
     }
 
     static async logout() {

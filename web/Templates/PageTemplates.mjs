@@ -1,4 +1,5 @@
 import {FJS} from "@targoninc/fjs";
+import {Auth} from "../Auth.mjs";
 
 export class PageTemplates {
     static cluster() {
@@ -49,5 +50,22 @@ export class PageTemplates {
                             .build(),
                     ).build()
             ).build();
+    }
+
+    static profile(router, user) {
+        return FJS.create("div")
+            .classes("flex-v")
+            .children(
+                FJS.create("span")
+                    .text("username: " + user.username)
+                    .build(),
+                FJS.create("button")
+                    .text("Logout")
+                    .onclick(async () => {
+                        await Auth.logout();
+                        router.navigate("profile");
+                    }).build()
+            )
+            .build();
     }
 }

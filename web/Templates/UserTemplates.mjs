@@ -1,9 +1,10 @@
 import {FJS} from "@targoninc/fjs";
+import {Auth} from "../Auth.mjs";
 
 export class UserTemplates {
-    static registerForm() {
-        return FJS.create("form")
-            .attributes("id", "registerForm", "action", "/register")
+    static login(router) {
+        return FJS.create("div")
+            .classes("flex-v", "padded", "rounded", "centered")
             .children(
                 FJS.create("div")
                     .attributes("class", "form-group")
@@ -13,7 +14,9 @@ export class UserTemplates {
                             .text("Username")
                             .build(),
                         FJS.create("input")
-                            .attributes("type", "text", "class", "form-control", "id", "username", "name", "username")
+                            .id("username")
+                            .name("username")
+                            .type("text")
                             .build()
                     ).build(),
                 FJS.create("div")
@@ -24,23 +27,20 @@ export class UserTemplates {
                             .text("Password")
                             .build(),
                         FJS.create("input")
-                            .attributes("type", "password", "class", "form-control", "id", "password", "name", "password")
-                            .build()
-                    ).build(),
-                FJS.create("div")
-                    .attributes("class", "form-group")
-                    .children(
-                        FJS.create("label")
-                            .attributes("for", "confirmPassword")
-                            .text("Confirm Password")
-                            .build(),
-                        FJS.create("input")
-                            .attributes("type", "password", "class", "form-control", "id", "confirmPassword", "name", "confirmPassword")
+                            .id("password")
+                            .name("password")
+                            .type("password")
                             .build()
                     ).build(),
                 FJS.create("button")
-                    .attributes("type", "submit", "class", "btn btn-primary")
-                    .text("Register")
+                    .text("Submit")
+                    .onclick(() => {
+                        const username = document.getElementById("username").value;
+                        const password = document.getElementById("password").value;
+                        Auth.authorize(username, password).then(() => {
+                            router.navigate("profile");
+                        });
+                    })
                     .build()
             ).build();
     }

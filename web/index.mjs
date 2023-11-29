@@ -2,6 +2,8 @@ import {createRouter} from "router5";
 import browserPlugin from 'router5-plugin-browser';
 import {Page} from "./Page.mjs";
 import {PageTemplates} from "./Templates/PageTemplates.mjs";
+import {Auth} from "./Auth.mjs";
+import {UserTemplates} from "./Templates/UserTemplates.mjs";
 
 const routes = [
     { name: 'stats', path: '/stats' },
@@ -16,9 +18,6 @@ const router = createRouter(routes, {
 router.usePlugin(browserPlugin());
 
 router.subscribe(async (route) => {
-    if (route.previousRoute && route.route.name === route.previousRoute.name) {
-        return;
-    }
     switch (route.route.name) {
         case "stats":
             document.body.innerHTML = "";
@@ -32,8 +31,13 @@ router.subscribe(async (route) => {
             break;
         case "profile":
             document.body.innerHTML = "";
-            const authState = await Page.authState();
-            document.body.appendChild(PageTemplates.profile());
+            const user = await Auth.user();
+            if (user === null) {
+                document.body.appendChild(UserTemplates.login(router));
+                break;
+            } else {
+                document.body.appendChild(PageTemplates.profile(router, user));
+            }
             break;
         case "search":
             document.body.innerHTML = "";
