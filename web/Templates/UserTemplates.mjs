@@ -3,7 +3,7 @@ import {Auth} from "../Auth.mjs";
 
 export class UserTemplates {
     static login(router) {
-        return FJS.create("div")
+        const form = FJS.create("div")
             .classes("flex-v", "padded", "rounded", "centered", "align-content")
             .children(
                 FJS.create("div")
@@ -34,14 +34,18 @@ export class UserTemplates {
                     ).build(),
                 FJS.create("button")
                     .text("Submit")
-                    .onclick(() => {
-                        const username = document.getElementById("username").value;
-                        const password = document.getElementById("password").value;
-                        Auth.authorize(username, password).then(() => {
-                            router.navigate("search");
-                        });
+                    .onclick(async () => {
+                        await Auth.authorizeFromForm(router);
                     })
                     .build()
             ).build();
+
+        form.addEventListener("keydown", async (e) => {
+            if (e.key === "Enter") {
+                await Auth.authorizeFromForm(router);
+            }
+        });
+
+        return form;
     }
 }

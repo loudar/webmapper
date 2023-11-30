@@ -64,7 +64,7 @@ export class PageTemplates {
 
     static profile(router, user) {
         return FJS.create("div")
-            .classes("flex-v")
+            .classes("flex-v", "padded")
             .children(
                 GenericTemplates.simpleLink("Search", "/search"),
                 FJS.create("span")

@@ -11,6 +11,14 @@ export class Auth {
         return null;
     }
 
+    static async authorizeFromForm(router) {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        Auth.authorize(username, password).then(() => {
+            router.navigate("search");
+        });
+    }
+
     static async authorize(username, password) {
         const res = await Api.authorize(username, password);
         if (res.user === null || res.error) {
