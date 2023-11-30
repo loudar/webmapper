@@ -1,5 +1,6 @@
 import {FJS} from "@targoninc/fjs";
 import {Auth} from "../Auth.mjs";
+import {GenericTemplates} from "./GenericTemplates.mjs";
 
 export class PageTemplates {
     static cluster() {
@@ -30,20 +31,9 @@ export class PageTemplates {
     static search(user) {
         let userElements = [];
         if (user) {
-            userElements = [
-                FJS.create("span")
-                    .classes("text-small")
-                    .text(`Logged in as ${user.username}`)
-                    .build(),
-            ];
+            userElements = [GenericTemplates.simpleLink(user.username, "/profile")];
         } else {
-            userElements = [
-                FJS.create("a")
-                    .classes("text-small", "max-content")
-                    .text("Login")
-                    .attributes("href", "/login")
-                    .build(),
-            ];
+            userElements = [GenericTemplates.simpleLink("Login", "/login")];
         }
 
         return FJS.create("div")
@@ -76,6 +66,7 @@ export class PageTemplates {
         return FJS.create("div")
             .classes("flex-v")
             .children(
+                GenericTemplates.simpleLink("Search", "/search"),
                 FJS.create("span")
                     .text("username: " + user.username)
                     .build(),
