@@ -2,6 +2,7 @@ create table if not exists webmap.linkcount
 (
     count           bigint                               not null,
     interlink_count bigint                               not null,
+    content_count   bigint                               null,
     created_at      datetime default current_timestamp() not null
         primary key
 );
@@ -45,19 +46,21 @@ create table if not exists webmap.users
 (
     id         bigint auto_increment
         primary key,
-    username   varchar(128)                         not null,
-    password   varchar(128)                         not null,
-    created_at datetime default current_timestamp() not null,
-    updated_at datetime default current_timestamp() not null on update current_timestamp()
+    username   varchar(128)                           not null,
+    password   varchar(128)                           not null,
+    created_at datetime   default current_timestamp() not null,
+    updated_at datetime   default current_timestamp() not null on update current_timestamp(),
+    admin      tinyint(1) default 0                   not null
 );
 
 create table if not exists webmap.search_history
 (
-    search_id bigint auto_increment
+    search_id  bigint auto_increment
         primary key,
-    user_id   bigint                               not null,
-    query     text                                 not null,
-    created_a datetime default current_timestamp() not null,
+    user_id    bigint                               not null,
+    query      text                                 not null,
+    created_at datetime default current_timestamp() not null,
+    count      bigint   default 1                   not null,
     constraint search_history_users_id_fk
         foreign key (user_id) references webmap.users (id)
             on delete cascade
@@ -86,8 +89,9 @@ create definer = root@`%` event if not exists webmap.linkcount on schedule
         starts '2023-11-27 14:16:01'
     enable
     do
-    INSERT INTO linkcount (count, interlink_count)
+    INSERT INTO linkcount (count, interlink_count, content_count)
     SELECT
         (SELECT count(*) FROM links),
-        (SELECT count(*) FROM links_linked);
+        (SELECT count(*) FROM links_linked),
+        (SELECT count(*) FROM links WHERE content IS NOT NULL);
 
