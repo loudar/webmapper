@@ -68,7 +68,7 @@ const concurrency = 3;
 let scraping = false;
 let locked = false;
 const scraper = new Scraper();
-const excludedTerms = ["linkedin", "microsoft", "bing", "facebook"];
+const excludedTerms = ["linkedin", "microsoft", "bing", "facebook", "meetup"];
 
 setInterval(async () => {
     if (!scraping) {
@@ -319,8 +319,13 @@ app.get("/api/isWorking", checkAuthenticated, async (req, res) => {
 });
 
 app.get("/api/addExcludedTerm", checkAuthenticated, async (req, res) => {
+    const user = req.user;
     const term = req.query.term;
-    console.log(`Client requested to add excluded term ${term}...`);
+    console.log(`${user.username} requested to add excluded term ${term}...`);
+    if (!user.admin) {
+        res.send("Not authorized");
+        return;
+    }
     if (excludedTerms.includes(term)) {
         console.log(`Term ${term} already excluded, ignoring request.`);
         res.send("Already excluded");
@@ -331,8 +336,13 @@ app.get("/api/addExcludedTerm", checkAuthenticated, async (req, res) => {
 });
 
 app.get("/api/removeExcludedTerm", checkAuthenticated, async (req, res) => {
+    const user = req.user;
     const term = req.query.term;
-    console.log(`Client requested to remove excluded term ${term}...`);
+    console.log(`${user.username} requested to remove excluded term ${term}...`);
+    if (!user.admin) {
+        res.send("Not authorized");
+        return;
+    }
     if (!excludedTerms.includes(term)) {
         console.log(`Term ${term} not excluded, ignoring request.`);
         res.send("Not excluded");
