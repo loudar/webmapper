@@ -255,3 +255,7 @@ button:hover {
     max-width: 100%;
     overflow: auto;
 }
+
+.max-content {
+    max-width: max-content;
+}

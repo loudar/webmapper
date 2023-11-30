@@ -64,6 +64,16 @@ export class Api {
         return await res.data;
     }
 
+    static async isAuthorized() {
+        const res = await axios.get(`${api_url}/isAuthorized`, {
+            withCredentials: true
+        });
+        if (res.status !== 200) {
+            throw new Error(`Failed to check authorization: ${res.status}`);
+        }
+        return await res.data;
+    }
+
     static async logout() {
         const res = await axios.post(`${api_url}/logout`, {}, {
             withCredentials: true

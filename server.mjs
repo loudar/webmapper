@@ -138,6 +138,14 @@ app.post("/api/logout", (req, res) => {
     });
 });
 
+app.get("/api/isAuthorized", (req, res) => {
+    if (req.isAuthenticated()) {
+        res.send({user: req.user});
+        return;
+    }
+    res.send({});
+});
+
 app.get("/api/addSite", checkAuthenticated, async (req, res) => {
     const newUrl = req.query.url;
     console.log(`Adding page ${newUrl}...`);

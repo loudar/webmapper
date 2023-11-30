@@ -39,7 +39,7 @@ export class PageTemplates {
         } else {
             userElements = [
                 FJS.create("a")
-                    .classes("text-small")
+                    .classes("text-small", "max-content")
                     .text("Login")
                     .attributes("href", "/login")
                     .build(),
