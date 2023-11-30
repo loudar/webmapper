@@ -9,7 +9,7 @@ export default {
     entry: {
         index: "./web/index.mjs"
     },
-    mode: "development",
+    mode: "production",
     output: {
         filename: "[name].bundled.mjs",
         path: path.resolve(dirname, "dist"),
