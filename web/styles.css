@@ -92,6 +92,9 @@ html, body {
 .flex, .flex-v {
     display: flex;
     gap: 5px;
+}
+
+.align-content {
     align-items: center;
 }
 

@@ -4,7 +4,7 @@ import {Auth} from "../Auth.mjs";
 export class UserTemplates {
     static login(router) {
         return FJS.create("div")
-            .classes("flex-v", "padded", "rounded", "centered")
+            .classes("flex-v", "padded", "rounded", "centered", "align-content")
             .children(
                 FJS.create("div")
                     .classes("flex")

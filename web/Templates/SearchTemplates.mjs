@@ -58,7 +58,7 @@ export class SearchTemplates {
                 FJS.create("div")
                     .classes("search-result", "flex-v", "padded", "rounded")
                     .children(
-                        SearchTemplates.resultRelevance(entry.resultType),
+                        SearchTemplates.resultRelevance(entry.relevance),
                         SearchTemplates.title(entry.link.replace(/https?:\/\//, '').replace(/http?:\/\//, ''), query, query),
                         SearchTemplates.preview(entry.preview, query)
                     ).build()
