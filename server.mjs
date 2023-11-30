@@ -123,19 +123,20 @@ app.post("/api/authorize", async (req, res, next) => {
     })(req, res, next);
 });
 
-app.post("/api/logout", checkAuthenticated, (req, res) => {
+app.post("/api/logout", (req, res) => {
     req.logout(() => {
-        // Clear the cookie by setting its expiration to a past date
+        const isHttps = req.headers['x-forwarded-proto'] === 'https';
+
         res.clearCookie('connect.sid', {
             path: '/',
             httpOnly: true,
-            secure: false, // set to true if using https
-            sameSite: 'none' // or 'lax' or 'strict' based on your requirements
+            secure: isHttps,
+            sameSite: 'none'
         });
+
         res.send({message: "User has been successfully logged out."});
     });
 });
-
 
 app.get("/api/addSite", checkAuthenticated, async (req, res) => {
     const newUrl = req.query.url;

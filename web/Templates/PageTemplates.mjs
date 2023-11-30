@@ -63,7 +63,7 @@ export class PageTemplates {
                     .text("Logout")
                     .onclick(async () => {
                         await Auth.logout();
-                        router.navigate("profile");
+                        router.navigate("login");
                     }).build()
             )
             .build();

@@ -7,6 +7,7 @@
     --foreground-light: #eee;
     --foreground-dark: #ddd;
     --accent: #0aa;
+    --input-padding: 10px 16px;
 }
 
 #graph {
@@ -110,7 +111,7 @@ html, body {
 }
 
 input {
-    padding: 10px 16px;
+    padding: var(--input-padding);
     border-radius: var(--border-radius);
     border: 1px solid var(--foreground-dark);
     background: var(--background-dark);
@@ -212,4 +213,21 @@ a:hover {
 canvas.chart {
     width: 100% !important;
     height: 300px !important;
+}
+
+button, input, textarea {
+    width: max-content;
+    border: 1px solid var(--foreground-dark);
+    border-radius: var(--border-radius);
+    background: var(--background-dark);
+    color: var(--foreground);
+    padding: var(--input-padding);
+}
+
+button {
+    cursor: pointer;
+}
+
+button:hover {
+    background: var(--background);
 }
