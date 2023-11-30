@@ -176,26 +176,14 @@ app.get("/api/search", async (req, res) => {
     const query = req.query.query;
     console.log(`Client searched for "${query}"...`);
     const startTime = new Date();
-    const linkResults = (await db.searchLinksExplicit(query)).map(r => {
-        r.resultType = "link";
-        return r;
+    const contentResults = (await db.searchExplicit(query)).sort((a, b) => {
+        return b.relevance - a.relevance;
     });
-    const contentResults = (await db.searchContentExplicit(query)).map(r => {
-        r.resultType = "content";
-        return r;
+    const maxRelevance = Math.max(...contentResults.map(result => result.relevance));
+    const results = contentResults.map(result => {
+        result.relevance = result.relevance / maxRelevance;
+        return result;
     });
-    const results = [...linkResults, ...contentResults];
-    if (results.length < 100) {
-        const fuzzyLinkResults = (await db.searchLinksFuzzy(query)).map(r => {
-            r.resultType = "linkFuzzy";
-            return r;
-        });
-        const fuzzyContentResults = (await db.searchContentFuzzy(query)).map(r => {
-            r.resultType = "contentFuzzy";
-            return r;
-        });
-        results.push(...fuzzyLinkResults, ...fuzzyContentResults)
-    }
     const uniqueResults = [];
     const uniqueUrls = [];
     for (const result of results) {

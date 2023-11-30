@@ -58,38 +58,18 @@ export class SearchTemplates {
                 FJS.create("div")
                     .classes("search-result", "flex-v", "padded", "rounded")
                     .children(
-                        FJS.create("div")
-                            .classes("search-result-header", "flex")
-                            .children(
-                                SearchTemplates.resultType(entry.resultType),
-                                SearchTemplates.title(entry.link.replace(/https?:\/\//, '').replace(/http?:\/\//, ''), query, query)
-                            ).build(),
+                        SearchTemplates.resultRelevance(entry.resultType),
+                        SearchTemplates.title(entry.link.replace(/https?:\/\//, '').replace(/http?:\/\//, ''), query, query),
                         SearchTemplates.preview(entry.preview, query)
                     ).build()
             ).build();
     }
 
-    static resultType(type) {
-        let text;
-        switch (type) {
-            case "link":
-                text = "⭐⭐";
-                break;
-            case "linkFuzzy":
-                text = "⭐";
-                break;
-            case "content":
-                text = "🌟🌟";
-                break;
-            case "contentFuzzy":
-                text = "🌟";
-                break;
-            default:
-                text = "";
-        }
+    static resultRelevance(relevance) {
+        const count = Math.round(relevance * 5);
         return FJS.create("div")
-            .classes("search-result-type", "text-small", type)
-            .text(text)
+            .classes("search-result-type", "text-small")
+            .text(new Array(count).fill("⭐").join(""))
             .build();
     }
 

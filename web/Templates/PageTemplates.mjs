@@ -29,26 +29,23 @@ export class PageTemplates {
 
     static search() {
         return FJS.create("div")
+            .id("search-container")
+            .classes("flex-v", "padded")
             .children(
                 FJS.create("div")
-                    .id("search-container")
-                    .classes("flex-v", "padded")
-                    .children(
-                        FJS.create("div")
-                            .id("content-status")
-                            .build(),
-                        FJS.create("div")
-                            .classes("flex")
-                            .id("search-bar")
-                            .build(),
-                        FJS.create("div")
-                            .id("search-loading")
-                            .build(),
-                        FJS.create("div")
-                            .id("search-results")
-                            .classes("flex-v", "padded", "rounded")
-                            .build(),
-                    ).build()
+                    .id("content-status")
+                    .build(),
+                FJS.create("div")
+                    .classes("flex")
+                    .id("search-bar")
+                    .build(),
+                FJS.create("div")
+                    .id("search-loading")
+                    .build(),
+                FJS.create("div")
+                    .id("search-results")
+                    .classes("flex-v", "padded", "rounded")
+                    .build(),
             ).build();
     }
 
