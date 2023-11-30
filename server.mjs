@@ -176,9 +176,19 @@ app.get("/api/search", async (req, res) => {
     const query = req.query.query;
     console.log(`Client searched for "${query}"...`);
     const startTime = new Date();
-    const contentResults = (await db.searchExplicit(query)).sort((a, b) => {
-        return b.relevance - a.relevance;
-    });
+    let contentResults;
+    try {
+        contentResults = (await db.searchExplicit(query)).sort((a, b) => {
+            return b.relevance - a.relevance;
+        });
+    } catch (e) {
+        console.error(e);
+        res.send({
+            results: [],
+            time: 0
+        });
+        return;
+    }
     const maxRelevance = Math.max(...contentResults.map(result => result.relevance));
     const results = contentResults.map(result => {
         result.relevance = result.relevance / maxRelevance;
