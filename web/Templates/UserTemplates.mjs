@@ -38,7 +38,7 @@ export class UserTemplates {
                         const username = document.getElementById("username").value;
                         const password = document.getElementById("password").value;
                         Auth.authorize(username, password).then(() => {
-                            router.navigate("profile");
+                            router.navigate("search");
                         });
                     })
                     .build()

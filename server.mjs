@@ -8,13 +8,20 @@ import {fileURLToPath} from "url";
 import passport from "passport";
 import session from "express-session";
 import bcrypt from "bcryptjs";
-import passportLocal from "passport-local";
+import passportLocal from "passport-local";import rateLimit from "express-rate-limit";
 
 const LocalStrategy = passportLocal.Strategy;
 
 dotenv.config();
 const app = express();
 const port = 3000;
+const limiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 30,
+    message: "Too many requests from this IP, please try again after a minute"
+});
+
+app.use(limiter);
 
 const db_url = process.env.MYSQL_URL.toString();
 console.log(`Connecting to database at url ${db_url}...`);
