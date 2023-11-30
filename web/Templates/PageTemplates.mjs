@@ -79,6 +79,12 @@ export class PageTemplates {
                 FJS.create("span")
                     .text("username: " + user.username)
                     .build(),
+                FJS.create("span")
+                    .text("created: " + user.created_at)
+                    .build(),
+                FJS.create("span")
+                    .text("updated: " + user.updated_at)
+                    .build(),
                 FJS.create("button")
                     .text("Logout")
                     .onclick(async () => {
