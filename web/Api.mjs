@@ -73,4 +73,12 @@ export class Api {
         }
         return await res.data;
     }
+
+    static async getSuggestions(query) {
+        const res = await axios.get(`${api_url}/getSuggestions?query=${query}`);
+        if (res.status !== 200) {
+            throw new Error(`Failed to get suggestions: ${res.status}`);
+        }
+        return await res.data;
+    }
 }

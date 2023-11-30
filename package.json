@@ -8,7 +8,8 @@
     "build": "webpack --config webpack.config.js",
     "server": "node server.mjs",
     "start": "npm run build && npm run server",
-    "startLocal": "npm run build && npm run server && open http://localhost:3000"
+    "startLocal": "npm run build && npm run server && open http://localhost:3000",
+    "createDatabase": "node scripts/createDb.mjs"
   },
   "author": "",
   "license": "ISC",

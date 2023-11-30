@@ -152,7 +152,7 @@ a:hover {
     background: var(--background-dark);
 }
 
-#search-results:empty {
+#search-results:empty, #search-suggestions:empty {
     display: none;
 }
 
@@ -239,4 +239,19 @@ button:hover {
 .centered {
     max-width: max-content;
     margin: auto;
+}
+
+#search-suggestions {
+    position: relative;
+}
+
+.search-suggestions-list {
+    position: absolute;
+    background: var(--background-dark);
+    border: 1px solid var(--foreground-dark);
+    border-radius: var(--border-radius);
+    padding: 5px;
+    z-index: 1;
+    max-width: 100%;
+    overflow: auto;
 }

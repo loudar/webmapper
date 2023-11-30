@@ -172,9 +172,38 @@ app.get("/api/getClusters", async (req, res) => {
     res.send(clusters);
 });
 
+app.get("/api/getSuggestions", async (req, res) => {
+    const query = req.query.query;
+    const user = req.user;
+    let searches = [];
+    if (user) {
+        const userSearches = await db.getUserSearches(user.id, query);
+        searches = userSearches.map(s => {
+            s.userQuery = true;
+            delete s.user_id;
+            delete s.search_id;
+            return s;
+        }) ?? [];
+    }
+    const allSearches = await db.getSearches(query);
+    searches = searches.concat(allSearches.map(s => {
+        s.userQuery = false;
+        delete s.user_id;
+        delete s.search_id;
+        return s;
+    }));
+    res.send(searches);
+});
+
 app.get("/api/search", async (req, res) => {
     const query = req.query.query;
-    console.log(`Client searched for "${query}"...`);
+    const user = req.user;
+    if (user) {
+        console.log(`User ${user.username} requested search for ${query}...`);
+        await db.insertSearch(user.id, query);
+    } else {
+        console.log(`Client requested search for ${query}...`);
+    }
     const startTime = new Date();
     let contentResults;
     try {

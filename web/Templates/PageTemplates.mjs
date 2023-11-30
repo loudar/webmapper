@@ -27,17 +27,40 @@ export class PageTemplates {
             ).build();
     }
 
-    static search() {
+    static search(user) {
+        let userElements = [];
+        if (user) {
+            userElements = [
+                FJS.create("span")
+                    .classes("text-small")
+                    .text(`Logged in as ${user.username}`)
+                    .build(),
+            ];
+        } else {
+            userElements = [
+                FJS.create("a")
+                    .classes("text-small")
+                    .text("Login")
+                    .attributes("href", "/login")
+                    .build(),
+            ];
+        }
+
         return FJS.create("div")
             .id("search-container")
             .classes("flex-v", "padded")
             .children(
+                ...userElements,
                 FJS.create("div")
                     .id("content-status")
                     .build(),
                 FJS.create("div")
                     .classes("flex")
                     .id("search-bar")
+                    .build(),
+                FJS.create("div")
+                    .classes("flex")
+                    .id("search-suggestions")
                     .build(),
                 FJS.create("div")
                     .id("search-loading")

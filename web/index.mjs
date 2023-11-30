@@ -45,7 +45,7 @@ router.subscribe(async (route) => {
             document.body.appendChild(PageTemplates.profile(router, user));
             break;
         case "search":
-            document.body.appendChild(PageTemplates.search());
+            document.body.appendChild(PageTemplates.search(user));
             await Page.search(route.route.params.query || "");
             break;
         default:

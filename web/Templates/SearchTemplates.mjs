@@ -4,6 +4,7 @@ import {SearchAdapter} from "../SearchAdapter.mjs";
 
 export class SearchTemplates {
     static input() {
+        let lastSuggestionTime = 0;
         return FJS.create("input")
             .classes("search-input")
             .attributes("type", "text", "placeholder", "Search")
@@ -15,6 +16,20 @@ export class SearchTemplates {
                     window.history.pushState({}, "");
                     const searchResultContainer = document.querySelector('#search-results');
                     searchResultContainer.innerHTML = "";
+                }
+            })
+            .oninput(async (e) => {
+                const query = e.target.value;
+                const now = new Date();
+                if (now - lastSuggestionTime < 300) {
+                    return;
+                }
+                if (query.length > 0) {
+                    await SearchAdapter.suggest(query);
+                    lastSuggestionTime = now;
+                } else {
+                    const searchSuggestionsContainer = document.querySelector('#search-suggestions');
+                    searchSuggestionsContainer.innerHTML = "";
                 }
             })
             .build();
@@ -134,5 +149,27 @@ export class SearchTemplates {
             .classes("search-result-content", "text-small")
             .children(...spanElements)
             .build();
+    }
+
+    static suggestions(results, query) {
+        return FJS.create("div")
+            .classes("search-suggestions-list", "flex-v")
+            .children(...results.map(result => {
+                return SearchTemplates.suggestion(result, query);
+            }))
+            .build();
+    }
+
+    static suggestion(result, query) {
+        return FJS.create("a")
+            .classes("search-suggestion-link")
+            .attributes("href", `?query=${result}`, "target", "_blank")
+            .children(
+                FJS.create("div")
+                    .classes("search-suggestion", "flex-v", "padded", "rounded")
+                    .children(
+                        SearchTemplates.title(result.query, query)
+                    ).build()
+            ).build();
     }
 }
