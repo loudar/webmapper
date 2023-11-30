@@ -166,7 +166,7 @@ export class SearchTemplates {
             .attributes("href", `?query=${result}`, "target", "_blank")
             .children(
                 FJS.create("div")
-                    .classes("search-suggestion", "flex-v", "padded", "rounded")
+                    .classes("search-suggestion", "flex-v", "padded", "rounded", result.userQuery ? "user-query" : "_")
                     .children(
                         SearchTemplates.title(result.query, query)
                     ).build()

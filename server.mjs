@@ -201,7 +201,15 @@ app.get("/api/getSuggestions", async (req, res) => {
         }) ?? [];
     }
     const allSearches = await db.getSearches(query);
-    searches = searches.concat(allSearches.map(s => {
+    const filteredAll = allSearches.filter(s => {
+        for (const search of searches) {
+            if (search.query === s.query) {
+                return false;
+            }
+        }
+        return true;
+    });
+    searches = searches.concat(filteredAll.map(s => {
         s.userQuery = false;
         delete s.user_id;
         delete s.search_id;

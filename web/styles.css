@@ -7,6 +7,7 @@
     --foreground-light: #eee;
     --foreground-dark: #ddd;
     --accent: #0aa;
+    --accent-2: #44f;
     --input-padding: 10px 16px;
 }
 
@@ -258,4 +259,8 @@ button:hover {
 
 .max-content {
     max-width: max-content;
+}
+
+.user-query *, .user-query .highlight {
+    color: var(--accent-2);
 }
