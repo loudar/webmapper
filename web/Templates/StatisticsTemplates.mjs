@@ -20,7 +20,7 @@ export class StatisticsTemplates {
         const labels = statistics.map(entry => new Date(entry.created_at));
         const countData = statistics.map(entry => entry.count);
         const interlinkData = statistics.map(entry => entry.interlink_count);
-        const withContentData = statistics.map(entry => entry.with_content_count);
+        const withContentData = statistics.map(entry => entry.content_count);
 
         const chart = new Chart(ctx, {
             type: 'line',
