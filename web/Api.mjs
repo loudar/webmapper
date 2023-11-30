@@ -4,7 +4,9 @@ const api_url = "/api";
 
 export class Api {
     static async addSite(url) {
-        const res = await axios.get(`${api_url}/addSite?url=${url}`);
+        const res = await axios.get(`${api_url}/addSite?url=${url}`, {}, {
+            withCredentials: true
+        });
         if (res.status !== 200 && res.status !== 304) {
             throw new Error(`Failed to get links for ${url}`);
         }
@@ -63,7 +65,9 @@ export class Api {
     }
 
     static async logout() {
-        const res = await axios.post(`${api_url}/logout`);
+        const res = await axios.post(`${api_url}/logout`, {}, {
+            withCredentials: true
+        });
         if (res.status !== 200) {
             throw new Error(`Failed to logout: ${res.status}`);
         }

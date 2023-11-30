@@ -125,9 +125,17 @@ app.post("/api/authorize", async (req, res, next) => {
 
 app.post("/api/logout", checkAuthenticated, (req, res) => {
     req.logout(() => {
+        // Clear the cookie by setting its expiration to a past date
+        res.clearCookie('connect.sid', {
+            path: '/',
+            httpOnly: true,
+            secure: false, // set to true if using https
+            sameSite: 'none' // or 'lax' or 'strict' based on your requirements
+        });
         res.send({message: "User has been successfully logged out."});
     });
 });
+
 
 app.get("/api/addSite", checkAuthenticated, async (req, res) => {
     const newUrl = req.query.url;

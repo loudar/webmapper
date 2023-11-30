@@ -16,7 +16,7 @@ export class Auth {
         const res = await Api.authorize(username, password);
         if (res.user === null || res.error) {
             localStorage.removeItem('user');
-            await Cookie.set('connectionCookie', null);
+            Cookie.set('connectionCookie', null);
             return null;
         }
 
@@ -27,6 +27,5 @@ export class Auth {
     static async logout() {
         await Api.logout();
         localStorage.removeItem('user');
-        await Cookie.remove('connect.sid');
     }
 }
