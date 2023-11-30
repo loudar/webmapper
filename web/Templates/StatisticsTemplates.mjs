@@ -20,6 +20,7 @@ export class StatisticsTemplates {
         const labels = statistics.map(entry => new Date(entry.created_at));
         const countData = statistics.map(entry => entry.count);
         const interlinkData = statistics.map(entry => entry.interlink_count);
+        const withContentData = statistics.map(entry => entry.with_content_count);
 
         const chart = new Chart(ctx, {
             type: 'line',
@@ -27,15 +28,21 @@ export class StatisticsTemplates {
                 labels: labels,
                 datasets: [
                     {
-                        label: 'Count',
+                        label: 'url count',
                         data: countData,
                         borderColor: 'rgb(255, 99, 132)',
                         fill: false,
                     },
                     {
-                        label: 'Interlink Count',
+                        label: 'interlinks',
                         data: interlinkData,
                         borderColor: 'rgb(54, 162, 235)',
+                        fill: false,
+                    },
+                    {
+                        label: 'with content',
+                        data: withContentData,
+                        borderColor: 'rgb(20, 210, 120)',
                         fill: false,
                     }
                 ]
