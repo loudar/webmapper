@@ -21,6 +21,9 @@ export class SearchAdapter {
         const results = await Api.getSuggestions(query);
         const searchSuggestionsContainer = document.querySelector('#search-suggestions');
         searchSuggestionsContainer.innerHTML = "";
+        if (results.length === 0) {
+            return;
+        }
         searchSuggestionsContainer.appendChild(SearchTemplates.suggestions(results, query));
     }
 }
