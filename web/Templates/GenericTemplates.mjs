@@ -8,4 +8,12 @@ export class GenericTemplates {
             .attributes("href", href)
             .build();
     }
+
+    static actionButton(text, onclick) {
+        return FJS.create("button")
+            .classes("text-small", "max-content")
+            .text(text)
+            .onclick(onclick)
+            .build();
+    }
 }

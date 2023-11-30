@@ -1,6 +1,7 @@
-import {FJS} from "@targoninc/fjs";
+import {FJS, FjsObservable} from "@targoninc/fjs";
 import {Auth} from "../Auth.mjs";
 import {GenericTemplates} from "./GenericTemplates.mjs";
+import {Api} from "../Api.mjs";
 
 export class PageTemplates {
     static cluster() {
@@ -62,11 +63,32 @@ export class PageTemplates {
             ).build();
     }
 
-    static profile(router, user) {
+    static async profile(router, user) {
+        let actionElements = [];
+        if (user.admin === 1) {
+            const isWorking = await Api.isWorking();
+            const workingState = new FjsObservable(isWorking);
+            const actionTextState = new FjsObservable(isWorking ? "Stop work" : "Start work");
+            workingState.onUpdate = (value) => {
+                actionTextState.value = value ? "Stop work" : "Start work";
+            };
+            actionElements = [
+                GenericTemplates.actionButton(actionTextState, async () => {
+                    if (workingState.value) {
+                        await Api.stopWork();
+                    } else {
+                        await Api.startWork();
+                    }
+                    workingState.value = !workingState.value;
+                })
+            ];
+        }
+
         return FJS.create("div")
             .classes("flex-v", "padded")
             .children(
                 GenericTemplates.simpleLink("Search", "/search"),
+                ...actionElements,
                 FJS.create("span")
                     .text("username: " + user.username)
                     .build(),

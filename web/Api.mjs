@@ -91,4 +91,34 @@ export class Api {
         }
         return await res.data;
     }
+
+    static async startWork() {
+        const res = await axios.get(`${api_url}/startWork`, {
+            withCredentials: true
+        });
+        if (res.status !== 200) {
+            throw new Error(`Failed to start work: ${res.status}`);
+        }
+        return await res.data;
+    }
+
+    static async stopWork() {
+        const res = await axios.get(`${api_url}/stopWork`, {
+            withCredentials: true
+        });
+        if (res.status !== 200) {
+            throw new Error(`Failed to stop work: ${res.status}`);
+        }
+        return await res.data;
+    }
+
+    static async isWorking() {
+        const res = await axios.get(`${api_url}/isWorking`, {
+            withCredentials: true
+        });
+        if (res.status !== 200) {
+            throw new Error(`Failed to check if working: ${res.status}`);
+        }
+        return await res.data;
+    }
 }

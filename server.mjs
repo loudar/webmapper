@@ -68,7 +68,7 @@ const concurrency = 3;
 let scraping = false;
 let locked = false;
 const scraper = new Scraper();
-const excludedTerms = ["linkedin", "microsoft", "bing"];
+const excludedTerms = ["linkedin", "microsoft", "bing", "facebook"];
 
 setInterval(async () => {
     if (!scraping) {
@@ -270,7 +270,12 @@ app.get("/api/getContentStatus", async (req, res) => {
 });
 
 app.get("/api/startWork", checkAuthenticated, async (req, res) => {
-    console.log(`Client requested to start work...`);
+    const user = req.user;
+    console.log(`${user.username} requested to start work...`);
+    if (!user.admin) {
+        res.send("Not authorized");
+        return;
+    }
     if (scraping) {
         console.log(`Already working, ignoring request.`);
         res.send("Already working");
@@ -281,7 +286,12 @@ app.get("/api/startWork", checkAuthenticated, async (req, res) => {
 });
 
 app.get("/api/stopWork", checkAuthenticated, async (req, res) => {
-    console.log(`Client requested to stop work...`);
+    const user = req.user;
+    console.log(`${user.username} requested to stop work...`);
+    if (!user.admin) {
+        res.send("Not authorized");
+        return;
+    }
     if (!scraping) {
         console.log(`Not working, ignoring request.`);
         res.send("Not working");
@@ -289,6 +299,15 @@ app.get("/api/stopWork", checkAuthenticated, async (req, res) => {
     }
     scraping = false;
     res.send("Stopped");
+});
+
+app.get("/api/isWorking", checkAuthenticated, async (req, res) => {
+    const user = req.user;
+    if (!user.admin) {
+        res.send("Not authorized");
+        return;
+    }
+    res.send(scraping);
 });
 
 app.get("/api/addExcludedTerm", checkAuthenticated, async (req, res) => {

@@ -42,7 +42,7 @@ router.subscribe(async (route) => {
                 router.navigate("login");
                 break;
             }
-            document.body.appendChild(PageTemplates.profile(router, user));
+            document.body.appendChild(await PageTemplates.profile(router, user));
             break;
         case "search":
             document.body.appendChild(PageTemplates.search(user));
