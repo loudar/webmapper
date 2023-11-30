@@ -16,7 +16,7 @@ export class PageTemplates {
 
     static stats() {
         return FJS.create("div")
-            .styles("max-width", "1200px", "margin", "0 auto")
+            .styles("max-width", "1200px", "margin", "auto")
             .children(
                 FJS.create("div")
                     .id("statistics")
