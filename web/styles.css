@@ -92,6 +92,7 @@ html, body {
 .flex, .flex-v {
     display: flex;
     gap: 5px;
+    align-items: center;
 }
 
 .flex-grow {
@@ -230,4 +231,9 @@ button {
 
 button:hover {
     background: var(--background);
+}
+
+.centered {
+    max-width: max-content;
+    margin: auto;
 }

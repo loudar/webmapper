@@ -7,7 +7,7 @@ export class UserTemplates {
             .classes("flex-v", "padded", "rounded", "centered")
             .children(
                 FJS.create("div")
-                    .attributes("class", "form-group")
+                    .classes("flex")
                     .children(
                         FJS.create("label")
                             .attributes("for", "username")
@@ -20,7 +20,7 @@ export class UserTemplates {
                             .build()
                     ).build(),
                 FJS.create("div")
-                    .attributes("class", "form-group")
+                    .classes("flex")
                     .children(
                         FJS.create("label")
                             .attributes("for", "password")
