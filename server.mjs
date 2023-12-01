@@ -110,6 +110,10 @@ app.post("/api/authorize", async (req, res, next) => {
         const hashedPassword = bcrypt.hashSync(req.body.password, 10);
         await db.insertUser(cleanUsername, hashedPassword, ip);
     }
+    if (existing && !existing.ip) {
+        const ip = IP.get(req);
+        await db.updateUserIp(existing.id, ip);
+    }
 
     passport.authenticate("local", (err, user, info) => {
         if (err) {
