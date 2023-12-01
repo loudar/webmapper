@@ -98,10 +98,14 @@ app.use((req, res, next) => {
 });
 
 app.post("/api/authorize", async (req, res, next) => {
-    const existing = await db.getUserByUsername(req.body.username);
+    const cleanUsername = req.body.username.toLowerCase();
+    if (cleanUsername.length < 3) {
+        return res.send({error: "Username must be at least 3 characters long"});
+    }
+    const existing = await db.getUserByUsername(cleanUsername);
     if (!existing) {
         const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-        await db.insertUser(req.body.username, hashedPassword);
+        await db.insertUser(cleanUsername, hashedPassword);
     }
 
     passport.authenticate("local", (err, user, info) => {
