@@ -8,7 +8,9 @@ import {fileURLToPath} from "url";
 import passport from "passport";
 import session from "express-session";
 import bcrypt from "bcryptjs";
-import passportLocal from "passport-local";import rateLimit from "express-rate-limit";
+import passportLocal from "passport-local";
+import rateLimit from "express-rate-limit";
+import {IP} from "./lib/IP.mjs";
 
 const LocalStrategy = passportLocal.Strategy;
 
@@ -104,8 +106,9 @@ app.post("/api/authorize", async (req, res, next) => {
     }
     const existing = await db.getUserByUsername(cleanUsername);
     if (!existing) {
+        const ip = IP.get(req);
         const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-        await db.insertUser(cleanUsername, hashedPassword);
+        await db.insertUser(cleanUsername, hashedPassword, ip);
     }
 
     passport.authenticate("local", (err, user, info) => {
