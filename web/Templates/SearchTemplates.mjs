@@ -163,7 +163,7 @@ export class SearchTemplates {
     static suggestion(result, query) {
         return FJS.create("a")
             .classes("search-suggestion-link")
-            .attributes("href", `?query=${result}`, "target", "_blank")
+            .attributes("href", `?query=${result.query}`, "target", "_blank")
             .children(
                 FJS.create("div")
                     .classes("search-suggestion", "flex-v", "padded", "rounded", result.userQuery ? "user-query" : "_")
