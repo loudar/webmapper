@@ -3,6 +3,8 @@ import {SearchTemplates} from "./Templates/SearchTemplates.mjs";
 
 export class SearchAdapter {
     static async search(query) {
+        const searchSuggestionsContainer = document.querySelector('#search-suggestions');
+        searchSuggestionsContainer.innerHTML = "";
         const loadingContainer = document.querySelector('#search-loading');
         loadingContainer.innerHTML = "";
         loadingContainer.appendChild(SearchTemplates.loading());
@@ -13,7 +15,6 @@ export class SearchAdapter {
         searchResultContainer.innerHTML = "";
         searchResultContainer.appendChild(SearchTemplates.time(results.results.length, results.time));
         searchResultContainer.appendChild(SearchTemplates.resultList(results.results, query));
-        const searchSuggestionsContainer = document.querySelector('#search-suggestions');
         searchSuggestionsContainer.innerHTML = "";
     }
 

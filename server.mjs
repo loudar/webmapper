@@ -68,7 +68,7 @@ const concurrency = 3;
 let scraping = false;
 let locked = false;
 const scraper = new Scraper();
-const excludedTerms = ["linkedin", "microsoft", "bing", "facebook", "meetup"];
+const excludedTerms = ["linkedin", "microsoft", "bing", "facebook", "meetup", "apple"];
 
 setInterval(async () => {
     if (!scraping) {
