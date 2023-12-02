@@ -34,6 +34,7 @@ export class StatisticsTemplates {
                         borderColor: 'rgb(255, 99, 132)',
                         fill: false,
                         pointRadius,
+                        borderWidth: 1,
                     },
                     {
                         label: 'interlinks',
@@ -41,6 +42,7 @@ export class StatisticsTemplates {
                         borderColor: 'rgb(54, 162, 235)',
                         fill: false,
                         pointRadius,
+                        borderWidth: 1,
                     },
                     {
                         label: 'with content',
@@ -48,6 +50,7 @@ export class StatisticsTemplates {
                         borderColor: 'rgb(20, 210, 120)',
                         fill: false,
                         pointRadius,
+                        borderWidth: 1,
                     }
                 ]
             },
