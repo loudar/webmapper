@@ -18,8 +18,12 @@ const port = 3000;
 const batchInterval = 500;
 const batchSize = 10;
 const concurrency = 3;
-let scraping = false;
-let locked = false;
+let runningProcesses = {
+    scraper: false,
+    linker: false
+};
+let linkerLocked = false;
+let scraperLocked = false;
 const enableAllSuggestions = false;
 const limiter = rateLimit({
     windowMs: 60 * 1000,
@@ -76,15 +80,22 @@ const scraper = new Scraper();
 const excludedTerms = ["linkedin", "microsoft", "bing", "facebook", "meetup", "apple"];
 
 setInterval(async () => {
-    if (!scraping) {
-        return;
+    if (runningProcesses.linker) {
+        if (!linkerLocked) {
+            linkerLocked = true;
+            scraper.processLinks(db, concurrency, batchSize, excludedTerms).then(() => {
+                linkerLocked = false;
+            });
+        }
     }
-    if (locked) {
-        return;
+    if (runningProcesses.scraper) {
+        if (!scraperLocked) {
+            scraperLocked = true;
+            scraper.processContent(db, concurrency, batchSize, excludedTerms).then(() => {
+                scraperLocked = false;
+            });
+        }
     }
-    locked = true;
-    await scraper.scrapeSites(db, concurrency, batchSize, excludedTerms);
-    locked = false;
 }, batchInterval);
 
 function checkAuthenticated(req, res, next) {
@@ -300,12 +311,15 @@ app.get("/api/startWork", checkAuthenticated, async (req, res) => {
         res.send("Not authorized");
         return;
     }
-    if (scraping) {
-        console.log(`Already working, ignoring request.`);
-        res.send("Already working");
-        return;
+    const requestedProcess = req.query.process;
+    if (requestedProcess === "linker") {
+        runningProcesses.linker = true;
+    } else if (requestedProcess === "scraper") {
+        runningProcesses.scraper = true;
+    } else {
+        runningProcesses.linker = true;
+        runningProcesses.scraper = true;
     }
-    scraping = true;
     res.send("Started");
 });
 
@@ -316,12 +330,15 @@ app.get("/api/stopWork", checkAuthenticated, async (req, res) => {
         res.send("Not authorized");
         return;
     }
-    if (!scraping) {
-        console.log(`Not working, ignoring request.`);
-        res.send("Not working");
-        return;
+    const requestedProcess = req.query.process;
+    if (requestedProcess === "linker") {
+        runningProcesses.linker = false;
+    } else if (requestedProcess === "scraper") {
+        runningProcesses.scraper = false;
+    } else {
+        runningProcesses.linker = false;
+        runningProcesses.scraper = false;
     }
-    scraping = false;
     res.send("Stopped");
 });
 
@@ -331,7 +348,7 @@ app.get("/api/isWorking", checkAuthenticated, async (req, res) => {
         res.send("Not authorized");
         return;
     }
-    res.send(scraping);
+    res.send(runningProcesses);
 });
 
 app.get("/api/addExcludedTerm", checkAuthenticated, async (req, res) => {

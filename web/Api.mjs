@@ -92,8 +92,8 @@ export class Api {
         return await res.data;
     }
 
-    static async startWork() {
-        const res = await axios.get(`${api_url}/startWork`, {
+    static async startWork(process) {
+        const res = await axios.get(`${api_url}/startWork?process=${process}`, {
             withCredentials: true
         });
         if (res.status !== 200) {
@@ -102,8 +102,8 @@ export class Api {
         return await res.data;
     }
 
-    static async stopWork() {
-        const res = await axios.get(`${api_url}/stopWork`, {
+    static async stopWork(process) {
+        const res = await axios.get(`${api_url}/stopWork?process=${process}`, {
             withCredentials: true
         });
         if (res.status !== 200) {
@@ -112,8 +112,8 @@ export class Api {
         return await res.data;
     }
 
-    static async isWorking() {
-        const res = await axios.get(`${api_url}/isWorking`, {
+    static async isWorking(process) {
+        const res = await axios.get(`${api_url}/isWorking?process=${process}`, {
             withCredentials: true
         });
         if (res.status !== 200) {

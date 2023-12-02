@@ -130,6 +130,12 @@ input {
     top: 10px;
 }
 
+.stats-container {
+    max-width: 1200px;
+    margin: auto;
+    width: 100%;
+}
+
 a {
     color: var(--accent);
     text-decoration: none;
@@ -217,7 +223,7 @@ a:hover {
 
 canvas.chart {
     width: 100% !important;
-    height: 300px !important;
+    height: 50vh !important;
 }
 
 button, input, textarea {

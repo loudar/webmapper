@@ -19,7 +19,7 @@ export class PageTemplates {
 
     static stats() {
         return FJS.create("div")
-            .styles("max-width", "1200px", "margin", "auto")
+            .classes("stats-container")
             .children(
                 FJS.create("div")
                     .id("statistics")
@@ -69,21 +69,37 @@ export class PageTemplates {
     static async profile(router, user) {
         let actionElements = [];
         if (user.admin === 1) {
-            const isWorking = await Api.isWorking();
-            const workingState = new FjsObservable(isWorking);
-            const actionTextState = new FjsObservable(isWorking ? "Stop work" : "Start work");
+            const runningProcesses = await Api.isWorking("all");
+            const workingState = new FjsObservable(runningProcesses);
+            const linkerActionTextState = new FjsObservable(runningProcesses.linker ? "Stop linking" : "Start linking");
+            const scraperActionTextState = new FjsObservable(runningProcesses.scraper ? "Stop scraping" : "Start scraping");
             workingState.onUpdate = (value) => {
-                actionTextState.value = value ? "Stop work" : "Start work";
+                linkerActionTextState.value = value.linker ? "Stop linking" : "Start linking";
+                scraperActionTextState.value = value.scraper ? "Stop scraping" : "Start scraping";
             };
             actionElements = [
-                GenericTemplates.actionButton(actionTextState, async () => {
-                    if (workingState.value) {
-                        await Api.stopWork();
+                GenericTemplates.actionButton(linkerActionTextState, async () => {
+                    if (workingState.value.linker) {
+                        await Api.stopWork("linker");
                     } else {
-                        await Api.startWork();
+                        await Api.startWork("linker");
                     }
-                    workingState.value = !workingState.value;
-                })
+                    workingState.value = {
+                        linker: !workingState.value.linker,
+                        scraper: workingState.value.scraper
+                    };
+                }),
+                GenericTemplates.actionButton(scraperActionTextState, async () => {
+                    if (workingState.value.scraper) {
+                        await Api.stopWork("scraper");
+                    } else {
+                        await Api.startWork("scraper");
+                    }
+                    workingState.value = {
+                        linker: workingState.value.linker,
+                        scraper: !workingState.value.scraper
+                    };
+                }),
             ];
         }
 
@@ -91,7 +107,11 @@ export class PageTemplates {
             .classes("flex-v", "padded")
             .children(
                 GenericTemplates.simpleLink("Search", "/search"),
-                ...actionElements,
+                FJS.create("div")
+                    .classes("flex")
+                    .children(
+                        ...actionElements,
+                    ).build(),
                 FJS.create("span")
                     .text("username: " + user.username)
                     .build(),
