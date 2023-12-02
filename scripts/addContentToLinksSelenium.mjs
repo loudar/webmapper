@@ -14,7 +14,7 @@ const excludeTerms = [
 ];
 let excludeQuery = excludeTerms.map(() => `link NOT LIKE ?`).join(' AND ');
 let bindVariables = excludeTerms.map(term => `%${term}%`);
-const query = `SELECT * FROM links WHERE status = 200 AND content = '[nocontent]' AND ${excludeQuery} LIMIT 5000`;
+const query = `SELECT * FROM links WHERE status = 200 AND content IS NULL AND ${excludeQuery} LIMIT 5000`;
 let links = await db.query(query, bindVariables);
 let total = links.length;
 let done = 0;
