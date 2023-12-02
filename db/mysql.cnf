@@ -2,3 +2,4 @@
 innodb_buffer_pool_size = 4G
 max_allowed_packet = 100M
 net_buffer_length = 100M
+event_scheduler = ON
