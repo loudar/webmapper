@@ -10,6 +10,9 @@ export class PageTemplates {
             .children(
                 FJS.create("div")
                     .attributes("class", "loading")
+                    .build(),
+                FJS.create("span")
+                    .text("This feature has been temporarily disabled.")
                     .build()
             ).build();
     }

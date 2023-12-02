@@ -7,6 +7,7 @@ import {UserTemplates} from "./Templates/UserTemplates.mjs";
 
 const routes = [
     { name: 'stats', path: '/stats' },
+    { name: '/', path: '/' },
     { name: 'cluster', path: '/cluster' },
     { name: 'login', path: '/login' },
     { name: 'profile', path: '/profile' },
@@ -14,7 +15,7 @@ const routes = [
 ];
 
 const router = createRouter(routes, {
-    defaultRoute: 'search',
+    defaultRoute: '/',
 });
 router.usePlugin(browserPlugin());
 
@@ -44,6 +45,7 @@ router.subscribe(async (route) => {
             }
             document.body.appendChild(await PageTemplates.profile(router, user));
             break;
+        case "/":
         case "search":
             document.body.appendChild(PageTemplates.search(user));
             await Page.search(route.route.params.query || "");

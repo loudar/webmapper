@@ -192,9 +192,9 @@ app.get("/api/getLinks", async (req, res) => {
 
 app.get("/api/getClusters", async (req, res) => {
     console.log("Client requested clusters...");
-    const clusters = await db.getClustersWithoutSubdomains();
-    console.log(`Sent ${clusters.length} clusters to client.`);
-    res.send(clusters);
+    //const clusters = await db.getClustersWithoutSubdomains();
+    //console.log(`Sent ${clusters.length} clusters to client.`);
+    res.send([]);
 });
 
 app.get("/api/getSuggestions", async (req, res) => {
