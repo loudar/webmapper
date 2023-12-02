@@ -22,6 +22,7 @@ export class StatisticsTemplates {
         const interlinkData = statistics.map(entry => entry.interlink_count);
         const withContentData = statistics.map(entry => entry.content_count);
 
+        const pointRadius = 0;
         const chart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -32,21 +33,21 @@ export class StatisticsTemplates {
                         data: countData,
                         borderColor: 'rgb(255, 99, 132)',
                         fill: false,
-                        pointRadius: 1,
+                        pointRadius,
                     },
                     {
                         label: 'interlinks',
                         data: interlinkData,
                         borderColor: 'rgb(54, 162, 235)',
                         fill: false,
-                        pointRadius: 1,
+                        pointRadius,
                     },
                     {
                         label: 'with content',
                         data: withContentData,
                         borderColor: 'rgb(20, 210, 120)',
                         fill: false,
-                        pointRadius: 1,
+                        pointRadius,
                     }
                 ]
             },
