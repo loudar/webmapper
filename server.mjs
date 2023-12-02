@@ -24,7 +24,11 @@ const enableAllSuggestions = false;
 const limiter = rateLimit({
     windowMs: 60 * 1000,
     max: 60,
-    message: "Too many requests from this IP, please try again after a minute"
+    message: "Too many requests from this IP, please try again after a minute",
+    standardHeaders: true,
+    keyGenerator: (req) => {
+        return IP.get(req);
+    }
 });
 
 app.use(limiter);
