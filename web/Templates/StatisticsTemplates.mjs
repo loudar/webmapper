@@ -32,18 +32,21 @@ export class StatisticsTemplates {
                         data: countData,
                         borderColor: 'rgb(255, 99, 132)',
                         fill: false,
+                        pointRadius: 1,
                     },
                     {
                         label: 'interlinks',
                         data: interlinkData,
                         borderColor: 'rgb(54, 162, 235)',
                         fill: false,
+                        pointRadius: 1,
                     },
                     {
                         label: 'with content',
                         data: withContentData,
                         borderColor: 'rgb(20, 210, 120)',
                         fill: false,
+                        pointRadius: 1,
                     }
                 ]
             },

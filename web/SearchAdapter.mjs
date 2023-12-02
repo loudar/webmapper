@@ -15,6 +15,7 @@ export class SearchAdapter {
         searchResultContainer.innerHTML = "";
         searchResultContainer.appendChild(SearchTemplates.time(results.results.length, results.time));
         searchResultContainer.appendChild(SearchTemplates.resultList(results.results, query));
+        searchSuggestionsContainer.innerHTML = "";
     }
 
     static async suggest(query) {

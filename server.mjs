@@ -8,13 +8,19 @@ import {fileURLToPath} from "url";
 import passport from "passport";
 import session from "express-session";
 import bcrypt from "bcryptjs";
-import passportLocal from "passport-local";import rateLimit from "express-rate-limit";
-
-const LocalStrategy = passportLocal.Strategy;
+import passportLocal from "passport-local";
+import rateLimit from "express-rate-limit";
+import {IP} from "./lib/IP.mjs";
 
 dotenv.config();
 const app = express();
 const port = 3000;
+const batchInterval = 500;
+const batchSize = 10;
+const concurrency = 3;
+let scraping = false;
+let locked = false;
+const enableAllSuggestions = false;
 const limiter = rateLimit({
     windowMs: 60 * 1000,
     max: 60,
@@ -37,6 +43,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+const LocalStrategy = passportLocal.Strategy;
 passport.use(new LocalStrategy(
     async (username, password, done) => {
         const user = await db.getUserByUsername(username);
@@ -61,14 +68,8 @@ passport.deserializeUser(async (id, done) => {
 
 const db = new DB(process.env.MYSQL_URL);
 await db.connect();
-
-const batchInterval = 500;
-const batchSize = 10;
-const concurrency = 3;
-let scraping = false;
-let locked = false;
 const scraper = new Scraper();
-const excludedTerms = ["linkedin", "microsoft", "bing", "facebook", "meetup"];
+const excludedTerms = ["linkedin", "microsoft", "bing", "facebook", "meetup", "apple"];
 
 setInterval(async () => {
     if (!scraping) {
@@ -98,10 +99,19 @@ app.use((req, res, next) => {
 });
 
 app.post("/api/authorize", async (req, res, next) => {
-    const existing = await db.getUserByUsername(req.body.username);
+    const cleanUsername = req.body.username.toLowerCase();
+    if (cleanUsername.length < 3) {
+        return res.send({error: "Username must be at least 3 characters long"});
+    }
+    const existing = await db.getUserByUsername(cleanUsername);
     if (!existing) {
+        const ip = IP.get(req);
         const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-        await db.insertUser(req.body.username, hashedPassword);
+        await db.insertUser(cleanUsername, hashedPassword, ip);
+    }
+    if (existing && !existing.ip) {
+        const ip = IP.get(req);
+        await db.updateUserIp(existing.id, ip);
     }
 
     passport.authenticate("local", (err, user, info) => {
@@ -200,21 +210,23 @@ app.get("/api/getSuggestions", async (req, res) => {
             return s;
         }) ?? [];
     }
-    const allSearches = await db.getSearches(query);
-    const filteredAll = allSearches.filter(s => {
-        for (const search of searches) {
-            if (search.query === s.query) {
-                return false;
+    if (enableAllSuggestions) {
+        const allSearches = await db.getSearches(query);
+        const filteredAll = allSearches.filter(s => {
+            for (const search of searches) {
+                if (search.query === s.query) {
+                    return false;
+                }
             }
-        }
-        return true;
-    });
-    searches = searches.concat(filteredAll.map(s => {
-        s.userQuery = false;
-        delete s.user_id;
-        delete s.search_id;
-        return s;
-    }));
+            return true;
+        });
+        searches = searches.concat(filteredAll.map(s => {
+            s.userQuery = false;
+            delete s.user_id;
+            delete s.search_id;
+            return s;
+        }));
+    }
     res.send(searches);
 });
 
