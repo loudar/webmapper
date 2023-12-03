@@ -17,7 +17,8 @@ const app = express();
 const port = 3000;
 const batchInterval = 500;
 const batchSize = 10;
-const concurrency = 3;
+const linkerConcurrency = 3;
+const scraperConcurrency = 10;
 let runningProcesses = {
     scraper: false,
     linker: false
@@ -83,7 +84,7 @@ setInterval(async () => {
     if (runningProcesses.linker) {
         if (!linkerLocked) {
             linkerLocked = true;
-            scraper.processLinks(db, concurrency, batchSize, excludedTerms).then(() => {
+            scraper.processLinks(db, linkerConcurrency, batchSize, excludedTerms).then(() => {
                 linkerLocked = false;
             });
         }
@@ -91,7 +92,7 @@ setInterval(async () => {
     if (runningProcesses.scraper) {
         if (!scraperLocked) {
             scraperLocked = true;
-            scraper.processContent(db, concurrency, batchSize, excludedTerms).then(() => {
+            scraper.processContent(db, scraperConcurrency, batchSize, excludedTerms).then(() => {
                 scraperLocked = false;
             });
         }
