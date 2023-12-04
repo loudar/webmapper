@@ -11,6 +11,7 @@ import bcrypt from "bcryptjs";
 import passportLocal from "passport-local";
 import rateLimit from "express-rate-limit";
 import {IP} from "./lib/IP.mjs";
+import {Worker} from "worker_threads";
 
 dotenv.config();
 const app = express();
@@ -66,7 +67,7 @@ passport.use(new LocalStrategy(
     }
 ));
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
 
@@ -92,8 +93,21 @@ setInterval(async () => {
     if (runningProcesses.scraper) {
         if (!scraperLocked) {
             scraperLocked = true;
-            scraper.processContent(db, scraperConcurrency, batchSize, excludedTerms).then(() => {
-                scraperLocked = false;
+            const worker = new Worker('./lib/workers/ScraperWorker.mjs');
+            worker.postMessage({
+                db_url: process.env.MYSQL_URL,
+                db_user: process.env.MYSQL_USER,
+                db_password: process.env.MYSQL_PASSWORD,
+                scraperConcurrency: scraperConcurrency,
+                batchSize: batchSize,
+                excludedTerms: excludedTerms
+            });
+
+            worker.on('message', (msg) => {
+                if (msg === 'DONE') {
+                    scraperLocked = false;
+                    worker.terminate();
+                }
             });
         }
     }
@@ -130,7 +144,7 @@ app.post("/api/authorize", async (req, res, next) => {
         await db.updateUserIp(existing.id, ip);
     }
 
-    passport.authenticate("local", (err, user, info) => {
+    passport.authenticate("local", (err, user) => {
         if (err) {
             console.log(err);
             return next(err);
