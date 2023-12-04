@@ -2,6 +2,9 @@ import {FJS} from "@targoninc/fjs";
 
 export class StatusTemplates {
     static contentStatus(status) {
+        const rawCount = status.total_links;
+        const countFormatted = rawCount.toLocaleString();
+
         return FJS.create("div")
             .classes("flex-v")
             .children(
@@ -18,7 +21,7 @@ export class StatusTemplates {
                     .children(
                         FJS.create("div")
                             .classes("flex-grow")
-                            .text(`${status.total_content_size} / ${status.total_links}`)
+                            .text(`${status.total_content_size} / ${countFormatted}`)
                             .build(),
                         FJS.create("div")
                             .text(status.percentage_done + " indexed")
