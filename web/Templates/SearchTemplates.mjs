@@ -60,12 +60,21 @@ export class SearchTemplates {
         return FJS.create("div")
             .classes("search-results", "flex-v")
             .children(...list.map(entry => {
-                return SearchTemplates.resultEntry(entry, query);
+                return SearchTemplates.linkEntry(entry, query);
             }))
             .build();
     }
 
     static resultEntry(entry, query) {
+        switch (entry.type) {
+            case 'image':
+                return SearchTemplates.imageEntry(entry, query);
+            default:
+                return SearchTemplates.linkEntry(entry, query);
+        }
+    }
+
+    static linkEntry(entry, query) {
         return FJS.create("a")
             .classes("search-result-link")
             .attributes("href", entry.link, "target", "_blank")
@@ -75,7 +84,22 @@ export class SearchTemplates {
                     .children(
                         SearchTemplates.resultRelevance(entry.relevance),
                         SearchTemplates.title(entry.link.replace(/https?:\/\//, '').replace(/http?:\/\//, ''), query, query),
-                        SearchTemplates.preview(entry.preview, query)
+                        SearchTemplates.textPreview(entry.preview, query)
+                    ).build()
+            ).build();
+    }
+
+    static imageEntry(entry, query) {
+        return FJS.create("a")
+            .classes("search-result-link")
+            .attributes("href", entry.link, "target", "_blank")
+            .children(
+                FJS.create("div")
+                    .classes("search-result", "flex-v", "padded", "rounded")
+                    .children(
+                        SearchTemplates.resultRelevance(entry.relevance),
+                        SearchTemplates.title(entry.link.replace(/https?:\/\//, '').replace(/http?:\/\//, ''), query, query),
+                        SearchTemplates.imagePreview(entry.link)
                     ).build()
             ).build();
     }
@@ -129,7 +153,7 @@ export class SearchTemplates {
             .build();
     }
 
-    static preview(preview, query) {
+    static textPreview(preview, query) {
         let parts;
         if (!preview) {
             parts = ["No content available."];
@@ -148,6 +172,13 @@ export class SearchTemplates {
         return FJS.create("div")
             .classes("search-result-content", "text-small")
             .children(...spanElements)
+            .build();
+    }
+
+    static imagePreview(link) {
+        return FJS.create("img")
+            .classes("search-result-image")
+            .attributes("src", link)
             .build();
     }
 
