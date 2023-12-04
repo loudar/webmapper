@@ -78,7 +78,7 @@ passport.deserializeUser(async (id, done) => {
 const db = new DB(process.env.MYSQL_URL);
 await db.connect();
 const scraper = new Scraper();
-const excludedTerms = ["linkedin", "microsoft", "bing", "facebook", "meetup", "apple"];
+const excludedTerms = ["linkedin", "microsoft", "bing", "facebook", "meetup", "apple", "xbox"];
 
 setInterval(async () => {
     if (runningProcesses.linker) {
