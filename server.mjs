@@ -16,7 +16,7 @@ dotenv.config();
 const app = express();
 const port = 3000;
 const batchInterval = 500;
-const batchSize = 40;
+const batchSize = 50;
 const linkerConcurrency = 3;
 const scraperConcurrency = 25;
 let runningProcesses = {
