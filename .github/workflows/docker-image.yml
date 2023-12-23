@@ -50,7 +50,7 @@ jobs:
       - name: Delete old Docker images
         env:
           REGISTRY_USER: ${{ secrets.TARGON_REGISTRY_USER }}
-          REGISTRY_PASSWORD: ${{ secrets.TARGON_REGISTRY_PW }}sdas
+          REGISTRY_PASSWORD: ${{ secrets.TARGON_REGISTRY_PW }}
           REPOSITORY: ${{ steps.reponame.outputs.value }}
         run: |
           chmod +x ./_scripts/delete_old_docker_images.sh
