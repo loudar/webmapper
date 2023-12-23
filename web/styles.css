@@ -270,3 +270,9 @@ button:hover {
 .user-query *, .user-query .highlight {
     color: var(--accent-2);
 }
+
+.search-result-image {
+    height: 100px;
+    width: auto;
+    object-fit: contain;
+}
